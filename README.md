@@ -1,6 +1,5 @@
 
 
-```markdown
 # Product IQ - Backend
 
 ## Table of Contents
