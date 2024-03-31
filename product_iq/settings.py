@@ -37,10 +37,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'apps.courses'
+    'users',
+    'subscriptions',
+    'apps_iq'
+    'rest_framework',
+    'rest_framework_simplejwt',
+    
 
    
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -79,11 +90,11 @@ WSGI_APPLICATION = 'product_iq.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'your_database_name',
-        'USER': 'your_database_user',
-        'PASSWORD': 'your_database_password',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'admin',
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': '5433',
     }
 }
 
@@ -106,6 +117,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': 'your-secret-key',
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
