@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -37,15 +38,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'rest_framework',
+    'rest_framework_simplejwt',
+
+
     'users',
     'subscriptions',
     'apps_iq',
-    'rest_framework',
-    'rest_framework_simplejwt',
-    
 
-   
+
+
 ]
+
+AUTH_USER_MODEL = "users.User"
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -99,14 +105,14 @@ WSGI_APPLICATION = 'product_iq.wsgi.application'
 # }
 
 DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.postgresql',
-       'NAME': 'postgres',
-       'USER': 'postgres',
-       'PASSWORD': '1946',
-       'HOST': '127.0.0.1',
-       'PORT': '5432',
-   }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'productiq',
+        'USER': 'postgres',
+        'PASSWORD': '1946',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+    }
 }
 
 # Password validation
@@ -127,7 +133,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-from datetime import timedelta
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),

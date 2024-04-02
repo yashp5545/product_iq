@@ -1,8 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.utils import timezone
 # from ..apps_iq.models import App
 from apps_iq.models import App
+
+from users.models import User
 
 
 class Subscription(models.Model):
