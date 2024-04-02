@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-from ..apps_iq.models import App
+# from ..apps_iq.models import App
+from apps_iq.models import App
 
 
 class Subscription(models.Model):
