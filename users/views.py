@@ -1,5 +1,6 @@
 # Inside views.py
 
+import datetime
 from django.http import HttpRequest
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -35,6 +36,9 @@ def login(request):
 
     access_token = create_access_token(user.id)
     refresh_token = create_refresh_token(user.id)
+
+    user.last_login = datetime.now()
+    user.save()
 
     responce = Response()
     responce.set_cookie('refressToken', refresh_token, httponly=True)
@@ -78,6 +82,7 @@ def refress_token(request):
     user = User.objects.get(id=user_id)
     access_token = create_access_token(user.id)
     return Response({'token': access_token})
+
 
 @api_view(['POST'])
 def logout(request):
