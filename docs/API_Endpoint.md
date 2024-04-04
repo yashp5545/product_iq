@@ -7,16 +7,25 @@
 
 ```json
 {
-    "email": "hello@gmail.com",
-    "password": "password",
-    "username": "hello"
+    "username": "swaro5or3p34700v111",
+    "email": "s@g.c3495rv301171",
+    "password": "1946",
+    "product_exp":"Beginner",
+    "name": "Swroop Dora"
 }
 ```
 Responce
 
 ```json
 {
-    "message": "User registered successfully"
+    "id": 8,
+    "username": "swaro5or3p34700v111",
+    "email": "s@g.c3495rv301171",
+    "name": "Swroop Dora",
+    "phone_number": "",
+    "job_title": "",
+    "company_or_institiution": "",
+    "product_exp": "Beginner"
 }
 ```
 

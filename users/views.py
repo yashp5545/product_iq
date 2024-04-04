@@ -23,6 +23,7 @@ def register(request):
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
@@ -37,7 +38,7 @@ def login(request):
     access_token = create_access_token(user.id)
     refresh_token = create_refresh_token(user.id)
 
-    user.last_login = datetime.now()
+    user.last_login = datetime.datetime.now()
     user.save()
 
     responce = Response()
@@ -92,3 +93,25 @@ def logout(request):
         'message': 'success'
     }
     return responce
+
+
+@api_view(['POST'])
+def update_user(request):
+    auth = get_authorization_header(request).split()
+    print(auth)
+
+    if auth and len(auth) == 2:
+        if auth[0].decode().lower() != 'bearer':
+            return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            user_id = decode_access_token(auth[1])
+            user = User.objects.get(id=user_id)
+            serializer = UserSerializer(user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)

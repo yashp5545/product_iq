@@ -51,14 +51,19 @@ class User(AbstractUser, PermissionsMixin):
 
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(unique=True)
-    product_exp = models.CharField(max_length=20, choices=[(
-        tag, tag.value) for tag in PRODUCT_EXP_CHOICES], default=PRODUCT_EXP_CHOICES.BEGINNER.value)
+    product_exp = models.CharField(max_length=200, choices=[(
+        tag.value, tag.value) for tag in PRODUCT_EXP_CHOICES], default=PRODUCT_EXP_CHOICES.BEGINNER.value)
     password = models.CharField(max_length=128)
+
+    name = models.CharField(max_length=50, blank=True)
+    phone_number = models.CharField(max_length=15, blank=True)
+    job_title = models.CharField(max_length=50, blank=True)
+    company_or_institiution = models.CharField(max_length=50, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    last_login = models.DateTimeField(auto_now=True)
+    last_login = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
