@@ -1,0 +1,471 @@
+{
+	"info": {
+		"_postman_id": "71738981-55f0-4f16-89ca-96f2f66033ae",
+		"name": "productiq",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "25553200"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "signup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response is a valid JSON object\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains id, username, email, name, phone_number, job_title, company_or_institiution, and product_exp properties\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property('id');\r",
+									"    pm.expect(jsonData).to.have.property('username');\r",
+									"    pm.expect(jsonData).to.have.property('email');\r",
+									"    pm.expect(jsonData).to.have.property('name');\r",
+									"    pm.expect(jsonData).to.have.property('phone_number');\r",
+									"    pm.expect(jsonData).to.have.property('job_title');\r",
+									"    pm.expect(jsonData).to.have.property('company_or_institiution');\r",
+									"    pm.expect(jsonData).to.have.property('product_exp');\r",
+									"});\r",
+									"\r",
+									"// Stores the user id in an environment or global variable\r",
+									"var userId = pm.response.json().id;\r",
+									"pm.globals.set(\"USERID\", userId);\r",
+									"\r",
+									"pm.test(\"Email is in a valid format\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.expect(responseData.email).to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/, \"Email should be in a valid format\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Phone number is in a valid format\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.expect(responseData.phone_number).to.match(/^\\+\\d{1,3}-\\d{3}-\\d{3}-\\d{4}$/);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Job title is a non-empty string\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.expect(responseData.job_title).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Job title should not be empty\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Company or institiution name is a non-empty string\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.expect(responseData.company_or_institiution).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Get the JSON body from the request\r",
+									"var requestBody = pm.request.body;\r",
+									"\r",
+									"// Parse the JSON body\r",
+									"var jsonData = JSON.parse(requestBody.raw);\r",
+									"\r",
+									"console.log(jsonData);\r",
+									"\r",
+									"pm.globals.set(\"USERNAME\", jsonData.username);\r",
+									"pm.globals.set(\"PASSWORD\", jsonData.password);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"www\",\r\n    \"email\": \"w@jhdefhwwkj.c1ncj\",\r\n    \"password\": \"1946\",\r\n    \"product_exp\":\"Beginner\",\r\n    \"name\": \"Swroop Dora\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://127.0.0.1:8000/api/v1/auth/register",
+						"description": "This endpoint allows users to register for an account. Upon successful registration, the API returns the user's details in JSON format.\n\n### Request Body\n\n- `username` (text, required): The username of the user.\n- `email` (text, required): The email address of the user.\n- `password` (text, required): The password for the user's account.\n- `product_exp` (text, required): The user's experience with the product.\n- `name` (text, required): The name of the user.\n    \n\n### Response\n\n- Status: 201\n- Content-Type: application/json\n- `id`: The unique identifier for the registered user.\n- `username`: The username of the registered user.\n- `email`: The email address of the registered user.\n- `name`: The name of the registered user.\n- `phone_number`: The phone number of the registered user.\n- `job_title`: The job title of the registered user.\n- `company_or_institution`: The company or institution associated with the registered user.\n- `product_exp`: The experience with the product associated with the registered user."
+					},
+					"response": []
+				},
+				{
+					"name": "signin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"var json_data = pm.response.json()\r",
+									"\r",
+									"pm.globals.set(\"TOKEN\", json_data.token);\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.token).to.exist;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Token is a non-empty string\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData.token).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Token should not be empty\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Token is in a valid format\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"  \r",
+									"  pm.expect(responseData.token).to.be.a('string');\r",
+									"  pm.expect(responseData.token).to.match(/[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+/);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Token expiration or validity\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.token).to.exist.and.to.be.a('string');\r",
+									"    // Add additional checks for token expiration or validity if applicable\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{USERNAME}}\",\r\n    \"password\": \"{{PASSWORD}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://127.0.0.1:8000/api/v1/auth/login",
+						"description": "\nThis endpoint is used to authenticate and log in a user. The HTTP POST request should be made to http://127.0.0.1:8000/api/v1/auth/login with a JSON payload in the raw request body type containing the username and password.\n\n### Request Body\n- username (string, required): The username of the user.\n- password (string, required): The password of the user.\n\n### Response\nUpon successful authentication, the server responds with a status code of 200 and a JSON object with a token attribute containing the authentication token.\n\nExample:\n```json\n{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"\n}\n```\n"
+					},
+					"response": []
+				},
+				{
+					"name": "get user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Schema is valid\", function () {\r",
+									"        var schema = {\r",
+									"            type: \"object\",\r",
+									"            properties: {\r",
+									"                id: { type: \"number\" },\r",
+									"                username: { type: \"string\" },\r",
+									"                email: { type: \"string\", format: \"email\" },\r",
+									"                name: { type: \"string\" },\r",
+									"                phone_number: { type: \"string\" },\r",
+									"                job_title: { type: \"string\" },\r",
+									"                company_or_institiution: { type: \"string\" },\r",
+									"                product_exp: { type: \"string\" }\r",
+									"            },\r",
+									"            required: [\"id\", \"username\", \"email\", \"name\", \"phone_number\", \"job_title\", \"company_or_institiution\", \"product_exp\"],\r",
+									"        };\r",
+									"\r",
+									"        var response = pm.response.json();\r",
+									"        pm.expect(tv4.validate(response, schema)).to.be.true;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response Content-Type header is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Email is in a valid format\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"  \r",
+									"  pm.expect(responseData.email).to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/, \"Email format is not valid\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Id field should not be empty\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.expect(responseData.id).to.exist.and.to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Username field should not be empty\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.expect(responseData.username).to.exist.and.to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Email field should not be empty\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.expect(responseData.email).to.exist.and.to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Id should be a non-negative integer\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"  \r",
+									"  pm.expect(responseData).to.be.an('object');\r",
+									"  pm.expect(responseData.id).to.be.a('number');\r",
+									"  pm.expect(responseData.id).to.satisfy((id) => id >= 0, \"Id should be a non-negative integer\");\r",
+									"});\r",
+									"\r",
+									"// Stores the userId in an environment or global variable\r",
+									"var userId = pm.response.json().id;\r",
+									"pm.globals.set(\"USERID\", userId);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.sendRequest(\"http://127.0.0.1:8000/api/v1/auth/refresh\", function (err, response) {\r",
+									"    var json_data = response.json()\r",
+									"    console.log(json_data);\r",
+									"\r",
+									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"swaroop340\",\r\n    \"email\": \"s@g.c349\",\r\n    \"password\": \"1946\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://127.0.0.1:8000/api/v1/auth/user",
+						"description": "\nThis endpoint makes an HTTP GET request to retrieve user information for authentication. The request should include the username, email, and password in the payload.\n\n### Request\n- Method: GET\n- Endpoint: http://127.0.0.1:8000/api/v1/auth/user\n- Headers: N/A\n- Body:\n  - username (text, required): The username of the user.\n  - email (text, required): The email address of the user.\n  - password (text, required): The password of the user.\n\n### Response\nUpon successful execution, the endpoint returns a status code of 200 and the content type is in JSON format. The response body includes the user's ID, username, email, name, phone number, job title, company or institution, and product experience.\n\nSample Response:\n```json\n{\n    \"id\": 0,\n    \"username\": \"\",\n    \"email\": \"\",\n    \"name\": \"\",\n    \"phone_number\": \"\",\n    \"job_title\": \"\",\n    \"company_or_institution\": \"\",\n    \"product_exp\": \"\"\n}\n```\n"
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has a message property and is not empty\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property('message').and.to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body is a valid JSON format\", function () {\r",
+									"    pm.response.to.have.jsonBody();\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"// Test to check if the response contains a Set-Cookie header\r",
+									"pm.test(\"Valid Set-Cookie header is present\", function() {\r",
+									"    pm.expect(pm.response.headers.has('Set-Cookie')).to.be.true.and.to.include('session_id');\r",
+									"});\r",
+									"\r",
+									"// Test to check if the session_id cookie is set to a valid value\r",
+									"pm.test(\"session_id cookie is set to a valid value\", function() {\r",
+									"    var session_id = pm.cookies.get('session_id');\r",
+									"    pm.expect(session_id).to.exist.and.to.be.a('string').and.to.have.lengthOf(32);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo2LCJleHAiOjE3MTIwNTU4MjUsImlhdCI6MTcxMjA1NTc5NX0.OJklHQXFcg6EV2K7kyf6KDLcKDGVhuwN9J9X6czIeGo",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://127.0.0.1:8000/api/v1/auth/logout",
+						"description": "### Auth Logout\n\nThis endpoint is used to log out the user from the application.\n\n**Response**\n\n- Status: 200\n- Content-Type: application/json\n- message (string): A message indicating the result of the logout action."
+					},
+					"response": []
+				},
+				{
+					"name": "refresh token",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo2LCJleHAiOjE3MTIwNTU4MjUsImlhdCI6MTcxMjA1NTc5NX0.OJklHQXFcg6EV2K7kyf6KDLcKDGVhuwN9J9X6czIeGo",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"swaroop340\",\r\n    \"email\": \"s@g.c349\",\r\n    \"password\": \"1946\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://127.0.0.1:8000/api/v1/auth/refresh"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "update",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.sendRequest(\"http://127.0.0.1:8000/api/v1/auth/refresh\", function (err, response) {\r",
+									"    var json_data = response.json()\r",
+									"    console.log(json_data);\r",
+									"\r",
+									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response is a valid JSON object\", function () {\r",
+									"    pm.expect(pm.response.json()).to.be.an('object');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has id, username, email, name, phone_number, job_title, company_or_institiution, and product_exp properties\", function () {\r",
+									"    pm.expect(pm.response.json()).to.include.all.keys('id', 'username', 'email', 'name', 'phone_number', 'job_title', 'company_or_institiution', 'product_exp');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Rajesh Dora\",\r\n    \"phone_number\": \"9777777\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://127.0.0.1:8000/api/v1/user/update",
+						"description": "\nThis endpoint allows you to update user information. The request should be sent as an HTTP POST to http://127.0.0.1:8000/api/v1/user/update.\n\n### Request Body\nThe request body should be in raw format and include the following parameters:\n- `name` (string, optional): The updated name of the user.\n- `phone_number` (string, optional): The updated phone number of the user.\n\n### Response\nUpon a successful update, the endpoint will return a status code of 200 and a JSON object with the updated user information, including:\n- `id` (number): The user's ID.\n- `username` (string): The username of the user.\n- `email` (string): The email address of the user.\n- `name` (string): The updated name of the user.\n- `phone_number` (string): The updated phone number of the user.\n- `job_title` (string): The job title of the user.\n- `company_or_institution` (string): The company or institution of the user.\n- `product_exp` (string): The product experience of the user.\n\n"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
