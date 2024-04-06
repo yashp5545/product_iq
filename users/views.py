@@ -11,9 +11,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.authentication import get_authorization_header
 
 from .models import PRODUCT_EXP_CHOICES, User
-
 from .serializers import UserSerializer
 from .authentication import create_access_token, create_refresh_token, decode_access_token, decode_refresh_token
+from .isAuth import isAuth
 
 
 @api_view(['POST'])
@@ -50,24 +50,11 @@ def login(request):
     return responce
 
 
+
 @api_view(['GET'])
-def get_user(request):
-    auth = get_authorization_header(request).split()
-    print(auth)
-
-    if auth and len(auth) == 2:
-        if auth[0].decode().lower() != 'bearer':
-            return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
-        try:
-            user_id = decode_access_token(auth[1])
-            user = User.objects.get(id=user_id)
-            serializer = UserSerializer(user)
-            return Response(serializer.data)
-        except:
-            return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
-    else:
-        return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
-
+@isAuth
+def get_user(request, user):
+    return Response(user)
 
 @api_view(['GET'])
 def refress_token(request):

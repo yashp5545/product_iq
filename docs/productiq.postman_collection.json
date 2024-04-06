@@ -466,6 +466,94 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "App",
+			"item": [
+				{
+					"name": "all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://127.0.0.1:8000/api/v1/app/all"
+					},
+					"response": []
+				},
+				{
+					"name": "module",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://127.0.0.1:8000/api/v1/app/1"
+					},
+					"response": []
+				},
+				{
+					"name": "challenge and lebel",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://127.0.0.1:8000/api/v1/app/1/module/5"
+					},
+					"response": []
+				},
+				{
+					"name": "response",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.sendRequest(\"http://127.0.0.1:8000/api/v1/auth/refresh\", function (err, response) {\r",
+									"    var json_data = response.json()\r",
+									"    console.log(json_data);\r",
+									"\r",
+									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"answer\": \"hii\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://127.0.0.1:8000/api/v1/app/response/lebel/1"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "subscription",
+			"item": [
+				{
+					"name": "plans",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://127.0.0.1:8000/api/v1/subscription/plans"
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
