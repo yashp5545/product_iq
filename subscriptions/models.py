@@ -1,6 +1,7 @@
 from django.db import models
 # from django.contrib.auth.models import User
 from django.utils import timezone
+from django.db import transaction
 # from ..apps_iq.models import App
 from apps_iq.models import App
 
@@ -17,8 +18,7 @@ class Plan(models.Model):
     name = models.CharField(max_length=100)
     type = models.CharField(max_length=10, choices=[
                             (tag, tag.value) for tag in PlanType])
-    price_monthly = models.DecimalField(max_digits=10, decimal_places=2)
-    price_annual = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
     recommended = models.BooleanField(default=False)
 
@@ -36,30 +36,26 @@ class Plan(models.Model):
             plan = None
         return plan
 
-    @classmethod
-    def subscribe(cls, user, plan):
-        plan = cls.get_plan(plan)
-        if not plan:
-            return None
+    def subscribe(self, user):
+        @transaction.atomic
+        def _ ():
+            for app in self.apps.all():
+                Subscription.objects.create(
+                    user=user,
+                    app=app,
+                    end_date=timezone.now().date() +
+                    timezone.timedelta(
+                        days=30 if self.type == 'Monthly' else 365)
+                )
 
-        if (plan.type == PlanType.monthly):
-            end_date = timezone.now() + timezone.timedelta(days=30)
-        else:
-            end_date = timezone.now() + timezone.timedelta(days=365)
-        
-        for app in plan.apps.all():
-            Subscription.objects.create(
+            SubscriptionPayment.objects.create(
                 user=user,
-                app=app,
-                end_date=end_date
+                plan=self,
+                amount=self.price
             )
+        with transaction.atomic():
+            _()
         
-        SubscriptionPayment.objects.create(
-            user=user,
-            plan=plan,
-            amount=plan.price_annual if plan.type == PlanType.annual else plan.price_monthly
-        )
-
 
 class Subscription(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

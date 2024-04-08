@@ -6,8 +6,12 @@ urlpatterns = [
     path('plans', views.get_all_plans, name="get_all_plans"),
     # payment intent
 
+    path('payment-intent/<int:plan_id>',
+         views.create_payment_intent, name='create_payment_intent'),
+
 
     # webhook integration
+    path('webhook', views.stripe_webhook, name='stripe_webhook')
 
 
 ]
