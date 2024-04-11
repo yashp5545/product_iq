@@ -20,6 +20,10 @@ class Module(models.Model):
     active = models.BooleanField(default=True)
     app = models.ForeignKey(App, on_delete=models.CASCADE)
 
+    module_prompt = models.TextField(default='')
+    lebel_prompt = models.TextField(default='')
+    master_prompt = models.TextField(default='')
+
     def __str__(self):
         return self.name
     
@@ -37,6 +41,9 @@ class Level(models.Model):
     description = models.TextField()
     active = models.BooleanField(default=True)
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
+
+    use_model_lebel_prompt = models.BooleanField(default=True)
+    lebel_prompt = models.TextField(default='')
 
     def __str__(self):
         return self.name
