@@ -1,6 +1,8 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 from users.models import User
+
 
 # Create your models here.
 class App(models.Model):
@@ -58,3 +60,62 @@ class LevelResponses(models.Model):
 
     def __str__(self):
         return self.user.username + ' - ' + self.level.name
+    
+
+
+class Categories(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    active = models.BooleanField(default=True)
+
+    app = models.ForeignKey(App, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+    
+class Skill(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    active = models.BooleanField(default=True)
+    category = models.ForeignKey(Categories, on_delete=models.CASCADE)
+    tags = ArrayField(models.CharField(max_length=200), blank=True, default=list)
+
+    question_suggestion = models.JSONField()
+
+    skill_prompt = models.TextField(default='') 
+
+
+    def __str__(self):
+        return self.name
+
+class SkillResponses(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
+    answer = models.JSONField()
+
+
+class Section(models.Model):
+    name = models.CharField(max_length=255)
+    active = models.BooleanField(default=True)
+    app = models.ForeignKey(App, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+class Topic(models.Model):
+    name = models.CharField(max_length=255)
+    active = models.BooleanField(default=True)
+    section = models.ForeignKey(Section, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+    
+class Lession(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    active = models.BooleanField(default=True)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+    

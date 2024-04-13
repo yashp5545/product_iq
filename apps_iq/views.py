@@ -2,14 +2,13 @@ from django.shortcuts import render
 
 # Create your views here.
 
-from .models import App, Module, Challenge, Level, LevelResponses
+from .models import App, Module, Challenge, Level, LevelResponses, Categories, Skill, SkillResponses, Section, Topic, Lession
 from .helper import get_final_result_of_module
 from users.models import User
 from users.isAuth import isAuth
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
 
 
 @api_view(['GET'])
@@ -30,7 +29,7 @@ def get_modules(request, user, app_id):
     complition = {}
 
     for module in modules:
-        ## check how many challenges are complitely completed
+        # check how many challenges are complitely completed
         challenges = Challenge.objects.filter(module_id=module.id)
         total_challenge = len(challenges)
 
@@ -45,7 +44,7 @@ def get_modules(request, user, app_id):
             if is_level_completed:
                 # print(levels)
                 challenges_completed += 1
-        
+
         complition[module.id] = [challenges_completed, total_challenge]
 
     return Response([{
@@ -53,7 +52,7 @@ def get_modules(request, user, app_id):
         'module_name': module.name,
         'description': module.description,
         'active': module.active,
-        'complition':{
+        'complition': {
             'completed': complition[module.id][0],
             'total': complition[module.id][1]
         },
@@ -123,7 +122,7 @@ def get_responce(request, user, lebel_id):
                 'evalution_result': lebel_response.evalution_result
             }
         })
-    
+
     all_responce = LevelResponses.objects.filter(user=user, level=lebel)
     if (len(all_responce) > 2):
         response.update({
@@ -134,8 +133,99 @@ def get_responce(request, user, lebel_id):
             }
         })
 
-
     return Response(response)
 
 
+@api_view(['GET'])
+def get_categories(request, app_id):
+    categories = Categories.objects.filter(app_id=app_id)
+    if (not categories):
+        return Response({
+            'message': 'No categories found'
+        })
+    return Response([{
+        'id': category.id,
+        'name': category.name,
+        # 'description': category.description,
+        'active': category.active,
+    } for category in categories])
 
+
+@api_view(['GET'])
+def get_skills(request, app_id, categorie_id):
+    skills = Skill.objects.filter(category_id=categorie_id)
+    if (not skills):
+        return Response({
+            'message': 'No skills found'
+        })
+    return Response([{
+        'id': skill.id,
+        'name': skill.name,
+        'description': skill.description,
+        'active': skill.active,
+        'tags': skill.tags,
+        'question_suggestion': skill.question_suggestion,
+        'skill_prompt': skill.skill_prompt,
+    } for skill in skills])
+
+
+@api_view(['POST'])
+@isAuth
+def get_skill_responce(request, user, skill_id):
+    skill = Skill.objects.get(id=skill_id)
+    if (not skill):
+        return Response({
+            'message': 'No skill found'
+        })
+    user = User.objects.get(id=user['id'])
+    skill_response = SkillResponses.objects.create(
+        user=user,
+        skill=skill,
+        answer=request.data['answer'],
+    )
+    skill_response.save()
+
+    # send the saved response
+    return Response({
+        'id': skill_response.id,
+        'answer': skill_response.answer,
+        'skill': skill_response.skill.id,
+        'user': skill_response.user.id,
+    })
+
+
+@api_view(['GET'])
+def get_sections_topics(request, app_id):
+    sections = Section.objects.filter(app_id=app_id)
+    if (not sections):
+        return Response({
+            'message': 'No sections found'
+        })
+    return Response([{
+        'id': section.id,
+        'name': section.name,
+        'active': section.active,
+        'topic': [
+            {
+                'id': topic.id,
+                'name': topic.name,
+                'active': topic.active,
+            } for topic in Topic.objects.filter(section_id=section.id)
+        ]
+    } for section in sections])
+
+
+@api_view(['GET'])
+def get_lessions(request, app_id, topic_id):
+    lessions = Lession.objects.filter(topic_id=topic_id)
+    if (not lessions):
+        return Response({
+            'message': 'No lessions found'
+        })
+    return Response([{
+        'id': lession.id,
+        'name': lession.name,
+        'description': lession.description,
+        'active': lession.active,
+
+    } for lession in lessions])
