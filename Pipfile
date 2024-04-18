@@ -12,6 +12,7 @@ pyjwt = "*"
 django-cors-headers = "*"
 stripe = "*"
 python-decouple = "*"
+openai = "*"
 
 [dev-packages]
 

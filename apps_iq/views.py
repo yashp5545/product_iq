@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render
 
 # Create your views here.
@@ -9,6 +10,8 @@ from users.isAuth import isAuth
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+from gpt.helper import get_response
 
 
 @api_view(['GET'])
@@ -103,17 +106,33 @@ def get_responce(request, user, lebel_id):
     # use gpt to give responce like ratiting in different skills
     lebel = Level.objects.get(id=lebel_id)
     user = User.objects.get(id=user['id'])
+    if (not lebel or not request.data["answer"]):
+        return Response({
+            'message': 'No lebel or answer found'
+        }, status=400)
+    response = {}
+    responce = get_response(request.data["answer"], lebel.lebel_prompt)
+    if (os.environ.get("MODE") == "DEV"):
+        print(f"{response=}")
+        # add the gpt output to the response
+        response.update({
+            'gpt_output': responce
+        })
+
+    overall_score = responce['overall_score'] if 'overall_score' in responce else 0
+    report = responce['report'] if 'report' in responce else {}
+
     lebel_response = LevelResponses.objects.create(
         user=user,
         level=lebel,
-        answer=request.data['answer'],
+        answer=overall_score,
         evalution_result=0,
-        result={}
+        result=report,
     )
     lebel_response.save()
 
     # return last two lebel_respose
-    response = {}
+
     response.update(
         {
             'now': {
@@ -132,7 +151,12 @@ def get_responce(request, user, lebel_id):
                 'evalution_result': all_responce[len(all_responce)-2].evalution_result,
             }
         })
-
+    if (os.environ.get("MODE") == "DEV"):
+        print(f"{response=}")
+        # add the gpt output to the response
+        response.update({
+            'gpt_output': responce
+        })
     return Response(response)
 
 
