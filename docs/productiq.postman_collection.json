@@ -1320,6 +1320,43 @@
 						"description": "This endpoint sends an HTTP GET request to retrieve information about the app with ID 1. The response will be in JSON format and will include the ID, module name, and description of the app. along ith complition and result. complition will tell how much is complited and result will be given for whole module if the molule is completed.\n\nThe response will have a status code of 200 indicating a successful request."
 					},
 					"response": []
+				},
+				{
+					"name": "search module challenges label",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/v1/app/search/Product?search_lebel=module&depth=3",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"app",
+								"search",
+								"Product"
+							],
+							"query": [
+								{
+									"key": "search_lebel",
+									"value": "module"
+								},
+								{
+									"key": "depth",
+									"value": "3"
+								}
+							]
+						},
+						"description": "search_lebel can be \\[module, categorie, section\\]  \ndepth will define how much depth you want to go inside each app\n\nlike for example value of (search_lebel and depth) is (module and 2) then the result will be on basic of module and challenge only. And if depth is 3 then search eise be on basic of module, challenge and lebel.\n\nif no search_lebel is provided then the search on whole app is performed\n\n[http://127.0.0.1:8000/api/v1/app/search/<searchparameter< a=\"\">&gt;[?search_lebel=module&amp;depth=3]</searchparameter<>](http://127.0.0.1:8000/api/v1/app/search/<search)\n\n[different examples are given.](http://127.0.0.1:8000/api/v1/app/search/<search)"
+					},
+					"response": []
 				}
 			]
 		},
