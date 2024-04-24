@@ -1,5 +1,6 @@
 import os
 from django.shortcuts import render
+from django.db.models import Q
 
 # Create your views here.
 
@@ -125,8 +126,8 @@ def get_responce(request, user, lebel_id):
     lebel_response = LevelResponses.objects.create(
         user=user,
         level=lebel,
-        answer=overall_score,
-        evalution_result=0,
+        answer=request.data["answer"],
+        evalution_result=overall_score,
         result=report,
     )
     lebel_response.save()
@@ -158,6 +159,125 @@ def get_responce(request, user, lebel_id):
             'gpt_output': responce
         })
     return Response(response)
+
+
+@api_view(['GET'])
+def search(request, search):
+    search_term = search.lower()
+    pattern = search_term
+    query = Q(name__iregex=pattern) | Q(description__iregex=pattern)
+    query_name = Q(name__iregex=pattern)
+    result = {}
+
+    search_lebel_query = request.GET.get('search_lebel', None)
+    depth_query = request.GET.get('depth', None)
+    if (depth_query is None):
+        depth_query = 5
+    else:
+        depth_query = int(depth_query)
+    if not search_lebel_query:
+        depth_query = 20
+    print(depth_query)
+
+    if search_lebel_query == "module" or not search_lebel_query:
+        if depth_query > 0:
+            modules = Module.objects.filter(query)
+            if (modules):
+                result['modules'] = [{
+                    'id': module.id,
+                    'module_name': module.name,
+                    'description': module.description,
+                    'active': module.active,
+                } for module in modules]
+            depth_query -= 1
+        if depth_query > 0:
+            challenges = Challenge.objects.filter(query)
+            if (challenges):
+                result['challenges'] = [{
+                    'id': challenge.id,
+                    'challenge_name': challenge.name,
+                    'description': challenge.description,
+                    'active': challenge.active,
+                    'module': challenge.module.id,
+                    'module_name': challenge.module.name,
+                } for challenge in challenges]
+            depth_query -= 1
+        if depth_query > 0:
+            labels = Level.objects.filter(query)
+            if (labels):
+                result['labels'] = [{
+                    'id': label.id,
+                    'label_name': label.name,
+                    'description': label.description,
+                    'active': label.active,
+                    'challenge': label.challenge.id,
+                    'challenge_name': label.challenge.name,
+                    'module': label.challenge.module.id,
+                    'module_name': label.challenge.module.name,
+                } for label in labels]
+            depth_query -= 1
+    if search_lebel_query == "categorie" or not search_lebel_query:
+        print("hi")
+        if depth_query > 0:
+            categories = Categories.objects.filter(query)
+            if (categories):
+                result['categories'] = [{
+                    'id': categorie.id,
+                    'name': categorie.name,
+                    'description': categorie.description,
+                    'active': categorie.active,
+                } for categorie in categories]
+            depth_query -= 1
+        if depth_query > 0:
+            skills = Skill.objects.filter(query)
+            if (skills):
+                result['skills'] = [{
+                    'id': skill.id,
+                    'name': skill.name,
+                    'description': skill.description,
+                    'active': skill.active,
+                    'categorie': skill.category.id,
+                    'categorie_name': skill.category.name,
+                } for skill in skills]
+            depth_query -= 1
+    if search_lebel_query == "section" or not search_lebel_query:
+        if depth_query > 0:
+            sections = Section.objects.filter(query_name)
+            if (sections):
+                result['sections'] = [{
+                    'id': section.id,
+                    'name': section.name,
+                    'active': section.active,
+                    'app': section.app.id,
+                } for section in sections]
+            depth_query -= 1
+        if (depth_query > 0):
+            topic = Topic.objects.filter(query_name)
+            if (topic):
+                result['topics'] = [{
+                    'id': topic.id,
+                    'name': topic.name,
+                    'active': topic.active,
+                    'section': topic.section.id,
+                    'section_name': topic.section.name,
+                } for topic in topic]
+            depth_query -= 1
+        if depth_query > 0:
+            lessions = Lession.objects.filter(query)
+            if (lessions):
+                result['lessions'] = [{
+                    'id': lession.id,
+                    'name': lession.name,
+                    'description': lession.description,
+                    'active': lession.active,
+                    'topic': lession.topic.id,
+                    'topic_name': lession.topic.name,
+                    'section': lession.topic.section.id,
+                    'section_name': lession.topic.section.name,
+                } for lession in lessions]
+            depth_query -= 1
+
+    return Response(result, status=200)
 
 
 @api_view(['GET'])

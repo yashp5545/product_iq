@@ -20,4 +20,5 @@ urlpatterns = [
      path('<int:app_id>/section/topics/<int:topic_id>/lessions',
                views.get_lessions, name="get_lessions"),
 
+     path('search/<str:search>', views.search, name="search"),
 ]
