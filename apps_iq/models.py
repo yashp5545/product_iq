@@ -10,11 +10,15 @@ class App(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     app_theme_color = models.CharField(max_length=50)
-    app_logo = models.ImageField(upload_to='app_logos/')  # Assuming app logos are uploaded to a directory
+    # Assuming app logos are uploaded to a directory
+    app_logo = models.ImageField(upload_to='app_logos/')
 
     def __str__(self):
         return self.app_name
-    
+
+    class Meta:
+        verbose_name = "App"
+
 
 class Module(models.Model):
     name = models.CharField(max_length=255)
@@ -28,7 +32,11 @@ class Module(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+    class Meta:
+        verbose_name = "Module"
+
+
 class Challenge(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
@@ -37,7 +45,11 @@ class Challenge(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+    class Meta:
+        verbose_name = "Module Challenge"
+
+
 class Level(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
@@ -49,7 +61,11 @@ class Level(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+    class Meta:
+        verbose_name = "Module Challenge Lebel"
+
+
 class LevelResponses(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     level = models.ForeignKey(Level, on_delete=models.CASCADE)
@@ -60,7 +76,9 @@ class LevelResponses(models.Model):
 
     def __str__(self):
         return self.user.username + ' - ' + self.level.name
-    
+
+    class Meta:
+        verbose_name = "Module Challenge Lebel Response"
 
 
 class Categories(models.Model):
@@ -72,26 +90,37 @@ class Categories(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+    class Meta:
+        verbose_name = "Categories"
+
+
 class Skill(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     active = models.BooleanField(default=True)
     category = models.ForeignKey(Categories, on_delete=models.CASCADE)
-    tags = ArrayField(models.CharField(max_length=200), blank=True, default=list)
+    tags = ArrayField(models.CharField(max_length=200),
+                      blank=True, default=list)
 
     question_suggestion = models.JSONField()
 
-    skill_prompt = models.TextField(default='') 
-
+    skill_prompt = models.TextField(default='')
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = "Categories Skill"
+
 
 class SkillResponses(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
     answer = models.JSONField()
+
+    class Meta:
+        verbose_name = "Categories Skill Responce"
 
 
 class Section(models.Model):
@@ -102,6 +131,10 @@ class Section(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Section"
+
+
 class Topic(models.Model):
     name = models.CharField(max_length=255)
     active = models.BooleanField(default=True)
@@ -109,7 +142,11 @@ class Topic(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+    class Meta:
+        verbose_name = "Section Topic"
+
+
 class Lession(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
@@ -118,4 +155,6 @@ class Lession(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+    class Meta:
+        verbose_name = "Section Topic Lession"

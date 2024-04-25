@@ -59,7 +59,8 @@ class User(AbstractUser, PermissionsMixin):
     phone_number = models.CharField(max_length=15, blank=True)
     job_title = models.CharField(max_length=50, blank=True)
     company_or_institiution = models.CharField(max_length=50, blank=True)
-
+    
+    # refered_by = models.ForeignKey(default=None, null= True, black=True, onDelete= models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
