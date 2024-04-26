@@ -34,7 +34,7 @@ class Module(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Module"
+        verbose_name = "Product coach module"
 
 
 class Challenge(models.Model):
@@ -47,7 +47,7 @@ class Challenge(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Module Challenge"
+        verbose_name = "Product coach challenge"
 
 
 class Level(models.Model):
@@ -63,7 +63,7 @@ class Level(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Module Challenge Lebel"
+        verbose_name = "Product coach lebel"
 
 
 class LevelResponses(models.Model):
@@ -78,7 +78,7 @@ class LevelResponses(models.Model):
         return self.user.username + ' - ' + self.level.name
 
     class Meta:
-        verbose_name = "Module Challenge Lebel Response"
+        verbose_name = "Product coach lebel Response"
 
 
 class Categories(models.Model):
@@ -92,7 +92,7 @@ class Categories(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Categories"
+        verbose_name = "Product worktools Categorie"
 
 
 class Skill(models.Model):
@@ -111,7 +111,7 @@ class Skill(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Categories Skill"
+        verbose_name = "Product worktools Skill"
 
 
 class SkillResponses(models.Model):
@@ -120,7 +120,7 @@ class SkillResponses(models.Model):
     answer = models.JSONField()
 
     class Meta:
-        verbose_name = "Categories Skill Responce"
+        verbose_name = " Product worktools Responce"
 
 
 class Section(models.Model):
@@ -132,7 +132,7 @@ class Section(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Section"
+        verbose_name = "Product IQ section"
 
 
 class Topic(models.Model):
@@ -144,7 +144,7 @@ class Topic(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Section Topic"
+        verbose_name = "Product IQ topic"
 
 
 class Lession(models.Model):
@@ -157,4 +157,4 @@ class Lession(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Section Topic Lession"
+        verbose_name = "Product IQ lession"

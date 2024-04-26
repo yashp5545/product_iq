@@ -109,14 +109,25 @@ WSGI_APPLICATION = 'product_iq.wsgi.application'
 #     }
 # }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'productiq',
+#         'USER': 'postgres',
+#         'PASSWORD': '1946',
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432',
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'productiq',
-        'USER': 'postgres',
-        'PASSWORD': '1946',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'NAME': 'defaultdb',
+        'USER': 'avnadmin',
+        'PASSWORD': 'AVNS_wmGhksDvZvm6eZRePH5',
+        'HOST': 'pg-4308b8f-akshaywaghmarecc-5362.d.aivencloud.com',
+        'PORT': '17618',
     }
 }
 
