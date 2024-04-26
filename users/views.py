@@ -44,7 +44,14 @@ def login(request):
     responce = Response()
     responce.set_cookie('refressToken', refresh_token, httponly=True)
     responce.data = {
-        'token': access_token
+        'token': access_token,
+        'name': user.name,
+        'email': user.email, 
+        'username': user.username,
+        'product_exp': user.product_exp,
+        'phone_number': user.phone_number,
+        'job_title': user.job_title,
+        'company': user.company_or_institiution,
     }
 
     return responce
