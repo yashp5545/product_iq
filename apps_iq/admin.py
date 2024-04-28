@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import App, Module, Challenge, Level, LevelResponses, Categories, SkillResponses, Skill, Section, Topic, Lession
+from .models import App, Module, Challenge, Level, LevelResponses, Categories, SkillResponses, Skill, Section, Topic, Lession, Question
 
 admin.site.register(App)
 admin.site.register(Module)
@@ -13,6 +13,7 @@ admin.site.register(LevelResponses)
 
 admin.site.register(Categories)
 admin.site.register(Skill)
+admin.site.register(Question)
 admin.site.register(SkillResponses)
 
 

@@ -11,7 +11,8 @@ urlpatterns = [
 
 
     # webhook integration
-    path('webhook', views.stripe_webhook, name='stripe_webhook')
+    path('webhook', views.stripe_webhook, name='stripe_webhook'),
 
+    path('my', views.get_my_subscriptions, name='get_my_subscriptions')
 
 ]

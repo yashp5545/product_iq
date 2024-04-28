@@ -10,7 +10,6 @@ from .models import User
 def isAuth(func_view):
     def wrapper(request, *args, **kwargs):
         auth = get_authorization_header(request).split()
-        print(auth)
         if (auth and len(auth) == 2):
             if (auth[0].decode().lower() != 'bearer'):
                 return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -20,7 +19,6 @@ def isAuth(func_view):
 
                 if (not user):
                     return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
-                print(user)
                 serializer = UserSerializer(user)
                 return func_view(request, serializer.data, *args, **kwargs)
             except Exception as e:

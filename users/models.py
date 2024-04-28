@@ -60,7 +60,11 @@ class User(AbstractUser, PermissionsMixin):
     job_title = models.CharField(max_length=50, blank=True)
     company_or_institiution = models.CharField(max_length=50, blank=True)
     
-    # refered_by = models.ForeignKey(default=None, null= True, black=True, onDelete= models.SET_NULL)
+    refered_by = models.ForeignKey(default=None, null= True, blank=True, on_delete= models.SET_NULL, to="User")
+    referral_ct = models.IntegerField(default=0)
+    number_of_discounts = models.IntegerField(default=0)
+    given_reward_to_referer = models.BooleanField(default=False)
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -70,7 +74,7 @@ class User(AbstractUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
 
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD  = 'username'
     REQUIRED_FIELDS = ['email']
 
     objects = CustomUserManager()
@@ -80,4 +84,4 @@ class User(AbstractUser, PermissionsMixin):
         verbose_name_plural = 'users'
 
     def __str__(self):
-        return f"{self.username} - {self.email} - {self.product_exp} - {self.created_at} - {self.updated_at} - {self.password}"
+        return f"{self.username} - {self.email} - {self.product_exp}"

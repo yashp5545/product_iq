@@ -66,7 +66,6 @@ def get_user(request, user):
 @api_view(['GET'])
 def refress_token(request):
     refresh_token = request.COOKIES.get('refressToken')
-    print(request.COOKIES)
     if not refresh_token:
         return Response({'error': 'Invalid token 1'}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -109,3 +108,20 @@ def update_user(request):
             return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
     else:
         return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(['PUT'])
+@isAuth
+def add_referred_by(request, user):
+    user = User.objects.get(id=user['id'])
+    user_refered_by = User.objects.get(username=request.data['username'])
+    if(user_refered_by == None):
+        return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+    if(user_refered_by == user):
+        return Response({'error': 'You cannot refer yourself'}, status=status.HTTP_400_BAD_REQUEST)
+    if(user.refered_by):
+        return Response({'error': 'Referral already added!'}, status=status.HTTP_400_BAD_REQUEST)
+    user.refered_by = user_refered_by
+    user.save()
+    return Response({'message': 'success', 'user': user.username, 'refered_by': user_refered_by.username})
+
+    

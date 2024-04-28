@@ -10,15 +10,14 @@ from enum import Enum
 
 
 class PlanType(Enum):
-    monthly = 'Monthly'
-    annual = 'Annual'
+    MONTHLY = 'Monthly'
+    ANNUAL = 'Annual'
 
 
 class Plan(models.Model):
     name = models.CharField(max_length=100)
-    type = models.CharField(max_length=10, choices=[
-                            (tag, tag.value) for tag in PlanType])
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    monthly_price = models.DecimalField(max_digits=10, decimal_places=2)
+    annual_price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
     recommended = models.BooleanField(default=False)
 
@@ -28,66 +27,90 @@ class Plan(models.Model):
     def __str__(self):
         return self.name
 
-    @classmethod
-    def get_plan(cls, plan_id):
-        try:
-            plan = cls.objects.get(id=plan_id)
-        except cls.DoesNotExist:
-            plan = None
-        return plan
+    # @classmethod
+    # def get_plan(cls, plan_id):
+    #     try:
+    #         plan = cls.objects.get(id=plan_id)
+    #     except cls.DoesNotExist:
+    #         plan = None
+    #     return plan
 
-    def subscribe(self, user):
-        @transaction.atomic
-        def _ ():
-            for app in self.apps.all():
-                Subscription.objects.create(
-                    user=user,
-                    app=app,
-                    end_date=timezone.now().date() +
-                    timezone.timedelta(
-                        days=30 if self.type == 'Monthly' else 365)
-                )
+    # def subscribe(self, user):
+    #     @transaction.atomic
+    #     def _ ():
+    #         for app in self.apps.all():
+    #             Subscription.objects.create(
+    #                 user=user,
+    #                 app=app,
+    #                 end_date=timezone.now().date() +
+    #                 timezone.timedelta(
+    #                     days=30 if self.type == 'Monthly' else 365)
+    #             )
 
-            SubscriptionPayment.objects.create(
-                user=user,
-                plan=self,
-                amount=self.price
-            )
-        with transaction.atomic():
-            _()
-        
+    #         SubscriptionPayment.objects.create(
+    #             user=user,
+    #             plan=self,
+    #             amount=self.price
+    #         )
+    #     with transaction.atomic():
+    #         _()
 
-class Subscription(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    app = models.ForeignKey(App, on_delete=models.CASCADE)
-    start_date = models.DateField(default=timezone.now)
-    end_date = models.DateField()
-    # active = models.BooleanField(default=True)
 
-    def __str__(self):
-        return f"{self.user.username} - {self.app.app_name} Subscription"
+# class Subscription(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     app = models.ForeignKey(App, on_delete=models.CASCADE)
+#     start_date = models.DateField(default=timezone.now)
+#     end_date = models.DateField()
+#     # active = models.BooleanField(default=True)
 
-    @classmethod
-    def check_is_subscribed(cls, user, app):
-        subscription = cls.objects.filter(user=user, app=app).first()
-        if subscription and subscription.end_date >= timezone.now().date():
-            return True
-        return False
+#     def __str__(self):
+#         return f"{self.user.username} - {self.app.app_name} Subscription"
 
-    @classmethod
-    def get_subscription(cls, user, app):
-        try:
-            subscription = cls.objects.get(user=user, app=app)
-        except cls.DoesNotExist:
-            subscription = None
-        return subscription
+#     @classmethod
+#     def check_is_subscribed(cls, user, app):
+#         subscription = cls.objects.filter(user=user, app=app).first()
+#         if subscription and subscription.end_date >= timezone.now().date():
+#             return True
+#         return False
+
+    # @classmethod
+    # def get_subscription(cls, user, app):
+    #     try:
+    #         subscription = cls.objects.get(user=user, app=app)
+    #     except cls.DoesNotExist:
+    #         subscription = None
+    #     return subscription
 
 
 class SubscriptionPayment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    plan = models.ForeignKey(Plan, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    plan = models.ForeignKey(Plan, on_delete=models.SET_NULL, null=True)
+    duration = models.CharField(max_length=10, choices=[(
+        tag.value, tag.value) for tag in PlanType], default=PlanType.MONTHLY.value)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+
     payment_date = models.DateField(default=timezone.now)
 
+    start_date = models.DateField(default=timezone.now)
+    end_date = models.DateField()
+
     def __str__(self):
-        return f"{self.user.username} - Payment for {self.subscription.app.app_name}"
+        return f"{self.user.username} - Payment for {self.plan.name}"
+
+
+class DiscountType(Enum):
+    PERCENTAGE = 'percentage'
+    FLAT = 'Flat'
+
+
+class Coupon(models.Model):
+    code = models.CharField(max_length=50)
+    discount_in_decimal = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0)
+    flat_discount = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0) 
+    discount_type = models.CharField(max_length=10, choices=[(
+        tag.value, tag.value) for tag in DiscountType], default='percentage')
+
+    def __str__(self):
+        return self.code + " With discount of " + str(self.discount_in_decimal)

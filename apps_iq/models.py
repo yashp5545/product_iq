@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
-
+from enum import Enum
 from users.models import User
 
 
@@ -103,7 +103,7 @@ class Skill(models.Model):
     tags = ArrayField(models.CharField(max_length=200),
                       blank=True, default=list)
 
-    question_suggestion = models.JSONField()
+    # question_suggestion = models.JSONField()
 
     skill_prompt = models.TextField(default='')
 
@@ -112,6 +112,23 @@ class Skill(models.Model):
 
     class Meta:
         verbose_name = "Product worktools Skill"
+
+
+class FromInputType(Enum):
+    TEXT = "text"
+    TEXTAREA = "textarea"
+
+
+class Question(models.Model):
+    name = models.CharField(max_length=100)
+    # label = models.CharField(max_length=100)
+    placeholder = models.CharField(max_length=500)
+    type = models.CharField(max_length=20, choices=[
+                            (tag.value, tag.value) for tag in FromInputType])
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
+
+    class Meta():
+        verbose_name = "Product worktools Question"
 
 
 class SkillResponses(models.Model):

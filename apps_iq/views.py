@@ -4,10 +4,11 @@ from django.db.models import Q
 
 # Create your views here.
 
-from .models import App, Module, Challenge, Level, LevelResponses, Categories, Skill, SkillResponses, Section, Topic, Lession
+from .models import App, Module, Challenge, Level, LevelResponses, Categories, Skill, SkillResponses, Section, Topic, Lession, Question
 from .helper import get_final_result_of_module
 from users.models import User
 from users.isAuth import isAuth
+from users.referal import check_and_reward_referer
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -104,7 +105,7 @@ def get_challenges_labels(request, user, app_id, module_id):
 @api_view(['POST'])
 @isAuth
 def get_responce(request, user, lebel_id):
-    # use gpt to give responce like ratiting in different skills
+    # use gpt to give responce like rating in different skills
     lebel = Level.objects.get(id=lebel_id)
     user = User.objects.get(id=user['id'])
     if (not lebel or not request.data["answer"]):
@@ -112,16 +113,14 @@ def get_responce(request, user, lebel_id):
             'message': 'No lebel or answer found'
         }, status=400)
     response = {}
-    responce = get_response(request.data["answer"], lebel.lebel_prompt)
-    if (os.environ.get("MODE") == "DEV"):
-        print(f"{response=}")
-        # add the gpt output to the response
-        response.update({
-            'gpt_output': responce
-        })
 
-    overall_score = responce['overall_score'] if 'overall_score' in responce else 0
-    report = responce['report'] if 'report' in responce else {}
+    if (os.environ.get("MODE") == "DEV"):
+        overall_score = 0
+        report={}
+    else:
+        responce = get_response(request.data["answer"], lebel.lebel_prompt)
+        overall_score = responce['overall_score'] if 'overall_score' in responce else 0
+        report = responce['report'] if 'report' in responce else {}
 
     lebel_response = LevelResponses.objects.create(
         user=user,
@@ -152,12 +151,13 @@ def get_responce(request, user, lebel_id):
                 'evalution_result': all_responce[len(all_responce)-2].evalution_result,
             }
         })
-    if (os.environ.get("MODE") == "DEV"):
-        print(f"{response=}")
-        # add the gpt output to the response
-        response.update({
-            'gpt_output': responce
-        })
+    # if (os.environ.get("MODE") == "DEV"):
+    #     print(f"{response=}")
+    #     # add the gpt output to the response
+    #     response.update({
+    #         'gpt_output': responce
+    #     })
+    check_and_reward_referer(user)
     return Response(response)
 
 
@@ -308,8 +308,14 @@ def get_skills(request, app_id, categorie_id):
         'description': skill.description,
         'active': skill.active,
         'tags': skill.tags,
-        'question_suggestion': skill.question_suggestion,
-        'skill_prompt': skill.skill_prompt,
+        'question_suggestion': [
+            {
+                'id': question.id,
+                'name': question.name,
+                'palceholder': question.placeholder,
+                'type': question.type,
+            } for question in Question.objects.filter(skill_id=skill.id)
+        ],
     } for skill in skills])
 
 
@@ -329,12 +335,20 @@ def get_skill_responce(request, user, skill_id):
     )
     skill_response.save()
 
+    question = Question.objects.filter(skill_id=skill_id).order_by('id')
+
     # send the saved response
     return Response({
         'id': skill_response.id,
         'answer': skill_response.answer,
         'skill': skill_response.skill.id,
         'user': skill_response.user.id,
+        'question': [{
+            'id': q.id,
+            'name': q.name,
+            'placeholder': q.placeholder,
+            'type': q.type,
+        } for q in question]
     })
 
 
