@@ -22,7 +22,21 @@ def register(request):
     print(request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        access_token = create_access_token(serializer.data['id'])
+        refresh_token = create_refresh_token(serializer.data['id'])
+        responce = Response()
+        responce.set_cookie('refressToken', refresh_token, httponly=True)
+        responce.data = {
+            'token': access_token,
+            'name': serializer.data['name'],
+            'email': serializer.data['email'],
+            'username': serializer.data['username'],
+            'product_exp': serializer.data['product_exp'],
+            'phone_number': serializer.data['phone_number'],
+            'job_title': serializer.data['job_title'],
+            'company': serializer.data['company_or_institiution'],
+        }
+        return responce
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
