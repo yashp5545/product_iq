@@ -123,7 +123,7 @@ WSGI_APPLICATION = 'product_iq.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'defaultdb',
+        'NAME': 'productiq_db',
         'USER': 'avnadmin',
         'PASSWORD': 'AVNS_wmGhksDvZvm6eZRePH5',
         'HOST': 'pg-4308b8f-akshaywaghmarecc-5362.d.aivencloud.com',
