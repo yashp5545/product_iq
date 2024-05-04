@@ -121,7 +121,7 @@ class FromInputType(Enum):
 
 
 class Question(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, verbose_name="field_value")
     # label = models.CharField(max_length=100)
     placeholder = models.CharField(max_length=500)
     type = models.CharField(max_length=20, choices=[

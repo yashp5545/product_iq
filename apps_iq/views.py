@@ -213,7 +213,7 @@ def search(request, search):
                 result['labels'] = [{
                     'id': label.id,
                     'label_name': label.name,
-                    'description': label.description,
+                    'level_question': label.description,
                     'active': label.active,
                     'challenge': label.challenge.id,
                     'challenge_name': label.challenge.name,
@@ -316,8 +316,8 @@ def get_skills(request, app_id, categorie_id):
         'question_suggestion': [
             {
                 'id': question.id,
-                'name': question.name,
-                'palceholder': question.placeholder,
+                'field_name': question.name,
+                'placeholder': question.placeholder,
                 'type': question.type,
             } for question in Question.objects.filter(skill_id=skill.id)
         ],
