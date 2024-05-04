@@ -34,7 +34,7 @@ class Module(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Product coach module"
+        verbose_name = "Product_coach_module"
 
 
 class Challenge(models.Model):
@@ -47,12 +47,12 @@ class Challenge(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Product coach challenge"
+        verbose_name = "Product_coach_challenge"
 
 
 class Level(models.Model):
     name = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(verbose_name="level_question")
     active = models.BooleanField(default=True)
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
 
@@ -63,7 +63,7 @@ class Level(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Product coach lebel"
+        verbose_name = "Product_coach_lebel"
 
 
 class LevelResponses(models.Model):
@@ -78,7 +78,7 @@ class LevelResponses(models.Model):
         return self.user.username + ' - ' + self.level.name
 
     class Meta:
-        verbose_name = "Product coach lebel Response"
+        verbose_name = "Product_coach_lebel_Response"
 
 
 class Categories(models.Model):
@@ -92,7 +92,7 @@ class Categories(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Product worktools Categorie"
+        verbose_name = "Product_worktools_Categorie"
 
 
 class Skill(models.Model):
@@ -111,7 +111,7 @@ class Skill(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Product worktools Skill"
+        verbose_name = "Product_worktools_Skill"
 
 
 class FromInputType(Enum):
@@ -128,7 +128,7 @@ class Question(models.Model):
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
 
     class Meta():
-        verbose_name = "Product worktools Question"
+        verbose_name = "Product_worktools_Question"
 
 
 class SkillResponses(models.Model):
@@ -137,7 +137,7 @@ class SkillResponses(models.Model):
     answer = models.JSONField()
 
     class Meta:
-        verbose_name = " Product worktools Responce"
+        verbose_name = " Product_worktools_Responce"
 
 
 class Section(models.Model):
@@ -149,7 +149,7 @@ class Section(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Product IQ section"
+        verbose_name = "Product_IQ_section"
 
 
 class Topic(models.Model):
@@ -161,7 +161,7 @@ class Topic(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Product IQ topic"
+        verbose_name = "Product_IQ_topic"
 
 
 class Lession(models.Model):
@@ -174,4 +174,4 @@ class Lession(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Product IQ lession"
+        verbose_name = "Product_IQ_lession"

@@ -16,7 +16,6 @@ admin.site.register(Skill)
 admin.site.register(Question)
 admin.site.register(SkillResponses)
 
-
 admin.site.register(Section)
 admin.site.register(Topic)
 admin.site.register(Lession)

@@ -15,6 +15,7 @@ from rest_framework.response import Response
 
 from gpt.helper import get_response
 
+MIN_LEN = 72
 
 @api_view(['GET'])
 def get_all(request):
@@ -92,7 +93,7 @@ def get_challenges_labels(request, user, app_id, module_id):
         'labels': [{
             'id': level.id,
             'level_name': level.name,
-            'description': level.description,
+            'level_question': level.description,
             'active': level.active,
             'completed': LevelResponses.objects.filter(user=user['id'], level=level.id).exists(),
             'rating': LevelResponses.objects.filter(user=user['id'], level=level.id).first().evalution_result if LevelResponses.objects.filter(user=user['id'], level=level.id).exists() else None,
@@ -110,17 +111,21 @@ def get_responce(request, user, lebel_id):
     user = User.objects.get(id=user['id'])
     if (not lebel or not request.data["answer"]):
         return Response({
-            'message': 'No lebel or answer found'
+            'message': 'No level or answer found'
         }, status=400)
+    if (len(request.data['answer']) < MIN_LEN):
+        return Response({
+            "message": f"The answer should be min {MIN_LEN} char long."
+        })
     response = {}
 
-    if (os.environ.get("MODE") == "DEV"):
-        overall_score = 0
-        report={}
-    else:
-        responce = get_response(request.data["answer"], lebel.lebel_prompt)
-        overall_score = responce['overall_score'] if 'overall_score' in responce else 0
-        report = responce['report'] if 'report' in responce else {}
+    # if (os.environ.get("MODE") == "DEV"):
+    #     overall_score = 0
+    #     report={}
+    # else:
+    responce = get_response(request.data["answer"], lebel.lebel_prompt)
+    overall_score = responce['overall_score'] if 'overall_score' in responce else 0
+    report = responce['report'] if 'report' in responce else {}
 
     lebel_response = LevelResponses.objects.create(
         user=user,
