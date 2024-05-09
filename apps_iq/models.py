@@ -57,7 +57,7 @@ class Level(models.Model):
     active = models.BooleanField(default=True)
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
 
-    use_model_lebel_prompt = models.BooleanField(default=False)
+    # use_model_lebel_prompt = models.BooleanField(default=True)
     lebel_prompt = models.TextField(default='')
 
     def __str__(self):

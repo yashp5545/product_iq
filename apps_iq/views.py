@@ -143,7 +143,7 @@ def get_responce(request, user, lebel_id):
             'now': {
                 'answer': lebel_response.answer,
                 'result': lebel_response.result,
-                'evalution_result': lebel_response.evalution_result
+                'evaluation_result': lebel_response.evalution_result
             }
         })
 
