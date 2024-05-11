@@ -116,7 +116,7 @@ def get_responce(request, user, lebel_id):
     if (len(request.data['answer']) < MIN_LEN):
         return Response({
             "message": f"The answer should be min {MIN_LEN} char long."
-        })
+        }, status=400)
     response = {}
 
     # if (os.environ.get("MODE") == "DEV"):
@@ -291,7 +291,7 @@ def get_categories(request, app_id):
     if (not categories):
         return Response({
             'message': 'No categories found'
-        })
+        }, status=404)
     return Response([{
         'id': category.id,
         'name': category.name,
@@ -306,7 +306,7 @@ def get_skills(request, app_id, categorie_id):
     if (not skills):
         return Response({
             'message': 'No skills found'
-        })
+        }, status=404)
     return Response([{
         'id': skill.id,
         'name': skill.name,
@@ -331,7 +331,7 @@ def get_skill_responce(request, user, skill_id):
     if (not skill):
         return Response({
             'message': 'No skill found'
-        })
+        }, status=404)
     user = User.objects.get(id=user['id'])
     skill_response = SkillResponses.objects.create(
         user=user,
@@ -363,7 +363,7 @@ def get_sections_topics(request, app_id):
     if (not sections):
         return Response({
             'message': 'No sections found'
-        })
+        }, status=404)
     return Response([{
         'id': section.id,
         'name': section.name,
@@ -384,7 +384,7 @@ def get_lessions(request, app_id, topic_id):
     if (not lessions):
         return Response({
             'message': 'No lessions found'
-        })
+        }, status=404)
     return Response([{
         'id': lession.id,
         'name': lession.name,

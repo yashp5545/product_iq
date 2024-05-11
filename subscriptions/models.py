@@ -104,7 +104,7 @@ class DiscountType(Enum):
 
 
 class Coupon(models.Model):
-    code = models.CharField(max_length=50)
+    code = models.CharField(max_length=50, unique=True)
     discount_in_decimal = models.DecimalField(
         max_digits=10, decimal_places=2, default=0)
     flat_discount = models.DecimalField(

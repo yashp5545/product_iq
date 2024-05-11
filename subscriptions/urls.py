@@ -6,7 +6,7 @@ urlpatterns = [
     path('plans', views.get_all_plans, name="get_all_plans"),
     # payment intent
 
-    path('payment-intent/<int:plan_id>',
+    path('payment-intent/plan/<int:plan_id>/duration/<str:duration>',
          views.create_payment_intent, name='create_payment_intent'),
 
 

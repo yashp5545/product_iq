@@ -23,7 +23,7 @@ def get_all_plans(request, user):
     coupon = request.query_params.get('coupon', None)
     coupon_discount = 0
     if coupon:
-        coupon = Coupon.objects.get(code=coupon)
+        coupon = Coupon.objects.filter(code=coupon).first()
         if not coupon:
             return Response({'error': 'Invalid Coupon'}, status=404)
         coupon_discount = float(coupon.discount_in_decimal)
@@ -56,11 +56,17 @@ def get_all_plans(request, user):
 
 @ api_view(['POST'])
 @ isAuth
-def create_payment_intent(request, user: dict, plan_id):
-    plan = Plan.objects.get(id=plan_id)
+def create_payment_intent(request, user: dict, plan_id, duration):
+    plan = Plan.objects.filter(id=plan_id).first()
+    print(plan)
 
     if not plan:
         return Response({'error': 'Invalid Plan'}, status=404)
+
+    if (duration not in [plan_duration.value for plan_duration in PlanType]):
+        return Response({'error': "Duration must be "+"/".join([plan_duration.value for plan_duration in PlanType])}, status=404)
+
+    plan_price = plan.annual_price if duration == PlanType.ANNUAL else plan.monthly_price
 
     checkout_session = stripe.checkout.Session.create(
         payment_method_types=['card'],
@@ -72,7 +78,7 @@ def create_payment_intent(request, user: dict, plan_id):
                     'description': plan.description,
 
                 },
-                'unit_amount': plan.price * 100,
+                'unit_amount': plan_price * 100,
             },
             'quantity': 1,
         }],
@@ -81,9 +87,14 @@ def create_payment_intent(request, user: dict, plan_id):
             'plan_id': plan_id,
         },
         mode='payment',
-        success_url=settings.STRIPE_SUCCESS_URL,
-        cancel_url=settings.STRIPE_CANCEL_URL,
+        success_url=settings.PAYMENT_SUCCESS_URL,
+        cancel_url=settings.PAYMENT_CANCEL_URL,
     )
+    print("hello")
+    print(checkout_session)
+    print("bye")
+
+    # return Response("success");
 
     return Response({
         'id': checkout_session.id,
