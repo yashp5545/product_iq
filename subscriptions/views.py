@@ -72,13 +72,13 @@ def create_payment_intent(request, user: dict, plan_id, duration):
         payment_method_types=['card'],
         line_items=[{
             'price_data': {
-                'currency': 'usd',
+                'currency': 'inr',
                 'product_data': {
                     'name': plan.name,
                     'description': plan.description,
 
                 },
-                'unit_amount': plan_price * 100,
+                'unit_amount': int(plan_price*100),
             },
             'quantity': 1,
         }],

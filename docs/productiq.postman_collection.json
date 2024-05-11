@@ -2,8 +2,9 @@
 	"info": {
 		"_postman_id": "71738981-55f0-4f16-89ca-96f2f66033ae",
 		"name": "productiq",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
-		"_exporter_id": "25553200"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25553200",
+		"_collection_link": "https://www.postman.com/se-project-iiita/workspace/product-iq/collection/25553200-71738981-55f0-4f16-89ca-96f2f66033ae?action=share&source=collection_link&creator=25553200"
 	},
 	"item": [
 		{
@@ -89,15 +90,26 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"www\",\r\n    \"email\": \"w@jhdefhwwkj.c1ncj\",\r\n    \"password\": \"1946\",\r\n    \"product_exp\":\"Beginner\",\r\n    \"name\": \"Swroop Dora\"\r\n}",
+							"raw": "{\r\n    \"username\": \"swaroopdora\",\r\n    \"email\": \"s@ss.ss\",\r\n    \"password\": \"1946\",\r\n    \"product_exp\":\"Beginner\",\r\n    \"name\": \"Swroop Dora\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "http://127.0.0.1:8000/api/v1/auth/register",
-						"description": "This endpoint allows users to register for an account. Upon successful registration, the API returns the user's details in JSON format.\n\n### Request Body\n\n- `username` (text, required): The username of the user.\n- `email` (text, required): The email address of the user.\n- `password` (text, required): The password for the user's account.\n- `product_exp` (text, required): The user's experience with the product.\n- `name` (text, required): The name of the user.\n    \n\n### Response\n\n- Status: 201\n- Content-Type: application/json\n- `id`: The unique identifier for the registered user.\n- `username`: The username of the registered user.\n- `email`: The email address of the registered user.\n- `name`: The name of the registered user.\n- `phone_number`: The phone number of the registered user.\n- `job_title`: The job title of the registered user.\n- `company_or_institution`: The company or institution associated with the registered user.\n- `product_exp`: The experience with the product associated with the registered user."
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/auth/register",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						},
+						"description": "This endpoint allows users to register for an account. Upon successful registration, the API returns the user's details in JSON format.\n\n### Request Body\n\n- `username` (text, required): The username of the user.\n- `email` (text, required): The email address of the user.\n- `password` (text, required): The password for the user's account.\n- `product_exp` (text, required): The user's experience with the product.\n- `name` (text, required): The name of the user.\n    \n\n### Response\n\n- Status: 201\n- Content-Type: application/json\n- `id`: The unique identifier for the registered user.\n- `username`: The username of the registered user.\n- `email`: The email address of the registered user.\n- `name`: The name of the registered user.\n- `phone_number`: The phone number of the registered user.\n- `job_title`: The job title of the registered user.\n- `company_or_institution`: The company or institution associated with the registered user.\n- `product_exp`: The experience with the product associated with the registered user. \\['Beginner', 'Intermediate', 'Advanced'\\]"
 					},
 					"response": []
 				},
@@ -175,8 +187,19 @@
 								}
 							}
 						},
-						"url": "http://127.0.0.1:8000/api/v1/auth/login",
-						"description": "\nThis endpoint is used to authenticate and log in a user. The HTTP POST request should be made to http://127.0.0.1:8000/api/v1/auth/login with a JSON payload in the raw request body type containing the username and password.\n\n### Request Body\n- username (string, required): The username of the user.\n- password (string, required): The password of the user.\n\n### Response\nUpon successful authentication, the server responds with a status code of 200 and a JSON object with a token attribute containing the authentication token.\n\nExample:\n```json\n{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"\n}\n```\n"
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/auth/login",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						},
+						"description": "\nThis endpoint is used to authenticate and log in a user. The HTTP POST request should be made to {{BACKEND_URL}}/api/v1/auth/login with a JSON payload in the raw request body type containing the username and password.\n\n### Request Body\n- username (string, required): The username of the user.\n- password (string, required): The password of the user.\n\n### Response\nUpon successful authentication, the server responds with a status code of 200 and a JSON object with a token attribute containing the authentication token.\n\nExample:\n```json\n{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"\n}\n```\n"
 					},
 					"response": []
 				},
@@ -261,13 +284,14 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"pm.sendRequest(\"http://127.0.0.1:8000/api/v1/auth/refresh\", function (err, response) {\r",
+									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+									"console.log(backend_url);\r",
+									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
 									"    var json_data = response.json()\r",
 									"    console.log(json_data);\r",
 									"\r",
 									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
-									"});\r",
-									""
+									"});"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -295,8 +319,19 @@
 								}
 							}
 						},
-						"url": "http://127.0.0.1:8000/api/v1/auth/user",
-						"description": "\nThis endpoint makes an HTTP GET request to retrieve user information for authentication. The request should include the username, email, and password in the payload.\n\n### Request\n- Method: GET\n- Endpoint: http://127.0.0.1:8000/api/v1/auth/user\n- Headers: N/A\n- Body:\n  - username (text, required): The username of the user.\n  - email (text, required): The email address of the user.\n  - password (text, required): The password of the user.\n\n### Response\nUpon successful execution, the endpoint returns a status code of 200 and the content type is in JSON format. The response body includes the user's ID, username, email, name, phone number, job title, company or institution, and product experience.\n\nSample Response:\n```json\n{\n    \"id\": 0,\n    \"username\": \"\",\n    \"email\": \"\",\n    \"name\": \"\",\n    \"phone_number\": \"\",\n    \"job_title\": \"\",\n    \"company_or_institution\": \"\",\n    \"product_exp\": \"\"\n}\n```\n"
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/auth/user",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"user"
+							]
+						},
+						"description": "\nThis endpoint makes an HTTP GET request to retrieve user information for authentication. The request should include the username, email, and password in the payload.\n\n### Request\n- Method: GET\n- Endpoint: {{BACKEND_URL}}/api/v1/auth/user\n- Headers: N/A\n- Body:\n  - username (text, required): The username of the user.\n  - email (text, required): The email address of the user.\n  - password (text, required): The password of the user.\n\n### Response\nUpon successful execution, the endpoint returns a status code of 200 and the content type is in JSON format. The response body includes the user's ID, username, email, name, phone number, job title, company or institution, and product experience.\n\nSample Response:\n```json\n{\n    \"id\": 0,\n    \"username\": \"\",\n    \"email\": \"\",\n    \"name\": \"\",\n    \"phone_number\": \"\",\n    \"job_title\": \"\",\n    \"company_or_institution\": \"\",\n    \"product_exp\": \"\"\n}\n```\n"
 					},
 					"response": []
 				},
@@ -361,7 +396,18 @@
 								}
 							}
 						},
-						"url": "http://127.0.0.1:8000/api/v1/auth/logout",
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/auth/logout",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"logout"
+							]
+						},
 						"description": "### Auth Logout\n\nThis endpoint is used to log out the user from the application.\n\n**Response**\n\n- Status: 200\n- Content-Type: application/json\n- message (string): A message indicating the result of the logout action."
 					},
 					"response": []
@@ -389,7 +435,18 @@
 								}
 							}
 						},
-						"url": "http://127.0.0.1:8000/api/v1/auth/refresh"
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/auth/refresh",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"refresh"
+							]
+						}
 					},
 					"response": []
 				}
@@ -405,13 +462,14 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"pm.sendRequest(\"http://127.0.0.1:8000/api/v1/auth/refresh\", function (err, response) {\r",
+									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+									"console.log(backend_url);\r",
+									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
 									"    var json_data = response.json()\r",
 									"    console.log(json_data);\r",
 									"\r",
 									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
-									"});\r",
-									""
+									"});"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -460,8 +518,69 @@
 								}
 							}
 						},
-						"url": "http://127.0.0.1:8000/api/v1/user/update",
-						"description": "\nThis endpoint allows you to update user information. The request should be sent as an HTTP POST to http://127.0.0.1:8000/api/v1/user/update.\n\n### Request Body\nThe request body should be in raw format and include the following parameters:\n- `name` (string, optional): The updated name of the user.\n- `phone_number` (string, optional): The updated phone number of the user.\n\n### Response\nUpon a successful update, the endpoint will return a status code of 200 and a JSON object with the updated user information, including:\n- `id` (number): The user's ID.\n- `username` (string): The username of the user.\n- `email` (string): The email address of the user.\n- `name` (string): The updated name of the user.\n- `phone_number` (string): The updated phone number of the user.\n- `job_title` (string): The job title of the user.\n- `company_or_institution` (string): The company or institution of the user.\n- `product_exp` (string): The product experience of the user.\n\n"
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/user/update",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"update"
+							]
+						},
+						"description": "\nThis endpoint allows you to update user information. The request should be sent as an HTTP POST to {{BACKEND_URL}}/api/v1/user/update.\n\n### Request Body\nThe request body should be in raw format and include the following parameters:\n- `name` (string, optional): The updated name of the user.\n- `phone_number` (string, optional): The updated phone number of the user.\n\n### Response\nUpon a successful update, the endpoint will return a status code of 200 and a JSON object with the updated user information, including:\n- `id` (number): The user's ID.\n- `username` (string): The username of the user.\n- `email` (string): The email address of the user.\n- `name` (string): The updated name of the user.\n- `phone_number` (string): The updated phone number of the user.\n- `job_title` (string): The job title of the user.\n- `company_or_institution` (string): The company or institution of the user.\n- `product_exp` (string): The product experience of the user.\n\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Add referred by",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+									"console.log(backend_url);\r",
+									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
+									"    var json_data = response.json()\r",
+									"    console.log(json_data);\r",
+									"\r",
+									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"swaroop\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/user/add/referredby",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"add",
+								"referredby"
+							]
+						},
+						"description": "To add the user who referred this user to our platform. You need to provide the username of the referranced user as provided by the current user in the request body as shown.\n\nThe api will return the following responce\n\n1. Response({'error': 'Referral already added!'}, status=status.HTTP_400_BAD_REQUEST)\n    \n2. Response({'error': 'You cannot refer yourself'}, status=status.HTTP_400_BAD_REQUEST)\n    \n3. Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)\n    \n4. Response({'message': 'success', 'user': user.username, 'refered_by': user_refered_by.username})"
 					},
 					"response": []
 				}
@@ -556,7 +675,18 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "http://127.0.0.1:8000/api/v1/app/all",
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/app/all",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"app",
+								"all"
+							]
+						},
 						"description": "\nThis endpoint sends an HTTP GET request to retrieve all the available apps. The response will be in JSON format and will include an array of objects, where each object represents an app with its ID, name, and description.\n\nExample response:\n```json\n[\n    {\n        \"id\": 0,\n        \"app_name\": \"\",\n        \"description\": \"\"\n    }\n]\n```\n"
 					},
 					"response": []
@@ -601,13 +731,14 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"pm.sendRequest(\"http://127.0.0.1:8000/api/v1/auth/refresh\", function (err, response) {\r",
+									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+									"console.log(backend_url);\r",
+									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
 									"    var json_data = response.json()\r",
 									"    console.log(json_data);\r",
 									"\r",
 									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
-									"});\r",
-									""
+									"});"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -635,7 +766,19 @@
 								}
 							}
 						},
-						"url": "http://127.0.0.1:8000/api/v1/app/1/module",
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/app/1/module",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"app",
+								"1",
+								"module"
+							]
+						},
 						"description": "This endpoint sends an HTTP GET request to retrieve information about the app with ID 1. The response will be in JSON format and will include the ID, module name, and description of the app. along ith complition and result. complition will tell how much is complited and result will be given for whole module if the molule is completed.\n\nThe response will have a status code of 200 indicating a successful request."
 					},
 					"response": []
@@ -740,13 +883,14 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"pm.sendRequest(\"http://127.0.0.1:8000/api/v1/auth/refresh\", function (err, response) {\r",
+									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+									"console.log(backend_url);\r",
+									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
 									"    var json_data = response.json()\r",
 									"    console.log(json_data);\r",
 									"\r",
 									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
-									"});\r",
-									""
+									"});"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -762,7 +906,20 @@
 								"type": "text"
 							}
 						],
-						"url": "http://127.0.0.1:8000/api/v1/app/1/module/5",
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/app/1/module/5",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"app",
+								"1",
+								"module",
+								"5"
+							]
+						},
 						"description": "\nThis endpoint makes an HTTP GET request to retrieve information about a specific module in an app. The response will contain the ID, challenge name, description, and labels associated with the module. The response will be in JSON format with a status code of 200.\n"
 					},
 					"response": []
@@ -774,13 +931,14 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"pm.sendRequest(\"http://127.0.0.1:8000/api/v1/auth/refresh\", function (err, response) {\r",
+									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+									"console.log(backend_url);\r",
+									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
 									"    var json_data = response.json()\r",
 									"    console.log(json_data);\r",
 									"\r",
 									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
-									"});\r",
-									""
+									"});"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -881,8 +1039,21 @@
 								}
 							}
 						},
-						"url": "http://127.0.0.1:8000/api/v1/app/response/lebel/1",
-						"description": "\nThis API endpoint is a POST request to http://127.0.0.1:8000/api/v1/app/response/lebel/1. It is used to submit an answer for evaluation.\n\n### Request Body\n- The request body should be in raw format and include a JSON object with the \"answer\" key.\n\n### Response\nUpon successful execution, the API returns a status code of 200 and a JSON object with the following structure:\n```json\n{\n    \"now\": {\n        \"answer\": \"\",\n        \"result\": {},\n        \"evalution_result\": 0\n    },\n    \"previous\": {\n        \"answer\": \"\",\n        \"result\": {},\n        \"evalution_result\": 0\n    }\n}\n```\nThe \"now\" and \"previous\" objects contain the submitted answer, evaluation result, and additional information.\n\n"
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/app/response/lebel/1",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"app",
+								"response",
+								"lebel",
+								"1"
+							]
+						},
+						"description": "This API endpoint is a POST request to {{BACKEND_URL}}/api/v1/app/response/lebel/1. It is used to submit an answer for evaluation.\n\n### Request Body\n\n- The request body should be in raw format and include a JSON object with the \"answer\" key.\n    \n\n### Response\n\nUpon successful execution, the API returns a status code of 200 and a JSON object with the following structure:\n\n``` json\n{\n    \"now\": {\n        \"answer\": \"\",\n        \"result\": {},\n        \"evalution_result\": 0\n    },\n    \"previous\": {\n        \"answer\": \"\",\n        \"result\": {},\n        \"evalution_result\": 0\n    }\n}\n\n ```\n\nThe \"now\" and \"previous\" objects contain the submitted answer, evaluation result, and additional information."
 					},
 					"response": []
 				},
@@ -926,13 +1097,14 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"pm.sendRequest(\"http://127.0.0.1:8000/api/v1/auth/refresh\", function (err, response) {\r",
+									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+									"console.log(backend_url);\r",
+									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
 									"    var json_data = response.json()\r",
 									"    console.log(json_data);\r",
 									"\r",
 									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
-									"});\r",
-									""
+									"});"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -960,7 +1132,19 @@
 								}
 							}
 						},
-						"url": "http://127.0.0.1:8000/api/v1/app/1/categorie",
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/app/1/categorie",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"app",
+								"1",
+								"categorie"
+							]
+						},
 						"description": "This endpoint sends an HTTP GET request to retrieve information about the app with ID 1. The response will be in JSON format and will include the ID, module name, and description of the app. along ith complition and result. complition will tell how much is complited and result will be given for whole module if the molule is completed.\n\nThe response will have a status code of 200 indicating a successful request."
 					},
 					"response": []
@@ -1005,13 +1189,14 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"pm.sendRequest(\"http://127.0.0.1:8000/api/v1/auth/refresh\", function (err, response) {\r",
+									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+									"console.log(backend_url);\r",
+									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
 									"    var json_data = response.json()\r",
 									"    console.log(json_data);\r",
 									"\r",
 									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
-									"});\r",
-									""
+									"});"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -1039,7 +1224,20 @@
 								}
 							}
 						},
-						"url": "http://127.0.0.1:8000/api/v1/app/2/categorie/1",
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/app/2/categorie/1",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"app",
+								"2",
+								"categorie",
+								"1"
+							]
+						},
 						"description": "This endpoint sends an HTTP GET request to retrieve information about the app with ID 1. The response will be in JSON format and will include the ID, module name, and description of the app. along ith complition and result. complition will tell how much is complited and result will be given for whole module if the molule is completed.\n\nThe response will have a status code of 200 indicating a successful request."
 					},
 					"response": []
@@ -1051,13 +1249,14 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"pm.sendRequest(\"http://127.0.0.1:8000/api/v1/auth/refresh\", function (err, response) {\r",
+									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+									"console.log(backend_url);\r",
+									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
 									"    var json_data = response.json()\r",
 									"    console.log(json_data);\r",
 									"\r",
 									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
-									"});\r",
-									""
+									"});"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -1158,8 +1357,21 @@
 								}
 							}
 						},
-						"url": "http://127.0.0.1:8000/api/v1/app/response/skill/1",
-						"description": "\nThis API endpoint is a POST request to http://127.0.0.1:8000/api/v1/app/response/lebel/1. It is used to submit an answer for evaluation.\n\n### Request Body\n- The request body should be in raw format and include a JSON object with the \"answer\" key.\n\n### Response\nUpon successful execution, the API returns a status code of 200 and a JSON object with the following structure:\n```json\n{\n    \"now\": {\n        \"answer\": \"\",\n        \"result\": {},\n        \"evalution_result\": 0\n    },\n    \"previous\": {\n        \"answer\": \"\",\n        \"result\": {},\n        \"evalution_result\": 0\n    }\n}\n```\nThe \"now\" and \"previous\" objects contain the submitted answer, evaluation result, and additional information.\n\n"
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/app/response/skill/1",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"app",
+								"response",
+								"skill",
+								"1"
+							]
+						},
+						"description": "\nThis API endpoint is a POST request to {{BACKEND_URL}}/api/v1/app/response/lebel/1. It is used to submit an answer for evaluation.\n\n### Request Body\n- The request body should be in raw format and include a JSON object with the \"answer\" key.\n\n### Response\nUpon successful execution, the API returns a status code of 200 and a JSON object with the following structure:\n```json\n{\n    \"now\": {\n        \"answer\": \"\",\n        \"result\": {},\n        \"evalution_result\": 0\n    },\n    \"previous\": {\n        \"answer\": \"\",\n        \"result\": {},\n        \"evalution_result\": 0\n    }\n}\n```\nThe \"now\" and \"previous\" objects contain the submitted answer, evaluation result, and additional information.\n\n"
 					},
 					"response": []
 				},
@@ -1203,13 +1415,14 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"pm.sendRequest(\"http://127.0.0.1:8000/api/v1/auth/refresh\", function (err, response) {\r",
+									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+									"console.log(backend_url);\r",
+									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
 									"    var json_data = response.json()\r",
 									"    console.log(json_data);\r",
 									"\r",
 									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
-									"});\r",
-									""
+									"});"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -1237,7 +1450,25 @@
 								}
 							}
 						},
-						"url": "http://127.0.0.1:8000/api/v1/app/3/section/topics",
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/v1/app/3/section/topics",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"app",
+								"3",
+								"section",
+								"topics"
+							]
+						},
 						"description": "This endpoint sends an HTTP GET request to retrieve information about the app with ID 1. The response will be in JSON format and will include the ID, module name, and description of the app. along ith complition and result. complition will tell how much is complited and result will be given for whole module if the molule is completed.\n\nThe response will have a status code of 200 indicating a successful request."
 					},
 					"response": []
@@ -1282,13 +1513,14 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"pm.sendRequest(\"http://127.0.0.1:8000/api/v1/auth/refresh\", function (err, response) {\r",
+									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+									"console.log(backend_url);\r",
+									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
 									"    var json_data = response.json()\r",
 									"    console.log(json_data);\r",
 									"\r",
 									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
-									"});\r",
-									""
+									"});"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -1316,7 +1548,22 @@
 								}
 							}
 						},
-						"url": "http://127.0.0.1:8000/api/v1/app/3/section/topics/1/lessions",
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/app/3/section/topics/1/lessions",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"app",
+								"3",
+								"section",
+								"topics",
+								"1",
+								"lessions"
+							]
+						},
 						"description": "This endpoint sends an HTTP GET request to retrieve information about the app with ID 1. The response will be in JSON format and will include the ID, module name, and description of the app. along ith complition and result. complition will tell how much is complited and result will be given for whole module if the molule is completed.\n\nThe response will have a status code of 200 indicating a successful request."
 					},
 					"response": []
@@ -1327,15 +1574,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/v1/app/search/Product?search_lebel=module&depth=3",
-							"protocol": "http",
+							"raw": "{{BACKEND_URL}}/api/v1/app/search/Product?search_lebel=module&depth=3",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{BACKEND_URL}}"
 							],
-							"port": "8000",
 							"path": [
 								"api",
 								"v1",
@@ -1354,7 +1596,7 @@
 								}
 							]
 						},
-						"description": "search_lebel can be \\[module, categorie, section\\]  \ndepth will define how much depth you want to go inside each app\n\nlike for example value of (search_lebel and depth) is (module and 2) then the result will be on basic of module and challenge only. And if depth is 3 then search eise be on basic of module, challenge and lebel.\n\nif no search_lebel is provided then the search on whole app is performed\n\n[http://127.0.0.1:8000/api/v1/app/search/<searchparameter< a=\"\">&gt;[?search_lebel=module&amp;depth=3]</searchparameter<>](http://127.0.0.1:8000/api/v1/app/search/<search)\n\n[different examples are given.](http://127.0.0.1:8000/api/v1/app/search/<search)"
+						"description": "search_lebel can be \\[module, categorie, section\\]  \ndepth will define how much depth you want to go inside each app\n\nlike for example value of (search_lebel and depth) is (module and 2) then the result will be on basic of module and challenge only. And if depth is 3 then search eise be on basic of module, challenge and lebel.\n\nif no search_lebel is provided then the search on whole app is performed\n\n[{{BACKEND_URL}}/api/v1/app/search/<searchparameter< a=\"\">&gt;[?search_lebel=module&amp;depth=3]</searchparameter<>]({{BACKEND_URL}}/api/v1/app/search/<search)\n\n[different examples are given.]({{BACKEND_URL}}/api/v1/app/search/<search)"
 					},
 					"response": []
 				}
@@ -1366,6 +1608,23 @@
 				{
 					"name": "plans",
 					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+									"console.log(backend_url);\r",
+									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
+									"    var json_data = response.json()\r",
+									"    console.log(json_data);\r",
+									"\r",
+									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
 						{
 							"listen": "test",
 							"script": {
@@ -1435,11 +1694,256 @@
 							}
 						}
 					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
-						"header": [],
-						"url": "http://127.0.0.1:8000/api/v1/subscription/plans",
-						"description": "This endpoint makes an HTTP GET request to retrieve a list of subscription plans. The response will be in JSON format with a status code of 200. An example response would be \"\\[{name: 999 plan\n\ntype: monthly\n\nprice_monthly: 99\n\nprice_annual: 999\n\ndescription: best plan\n\nrecommended: true}\\]\"."
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/subscription/plans?coupon=sdf",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"subscription",
+								"plans"
+							],
+							"query": [
+								{
+									"key": "coupon",
+									"value": "sdf"
+								}
+							]
+						},
+						"description": "\nThis API endpoint makes an HTTP GET request to retrieve subscription plans with an optional coupon parameter. The response will be in JSON format and will include an array of subscription plans with details such as id, name, monthly and annual prices, discounts, description, recommended status, and associated apps.\n"
+					},
+					"response": []
+				},
+				{
+					"name": "all user subscription",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Response status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Apps subscribed to array contains the expected number of elements\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('array');",
+									"    responseData.forEach(function(subscription) {",
+									"        pm.expect(subscription.apps_subscribed_to).to.be.an('array').that.is.not.empty;",
+									"        pm.expect(subscription.apps_subscribed_to).to.have.lengthOf.at.least(1);",
+									"    });",
+									"});",
+									"",
+									"",
+									"pm.test(\"Start date is in a valid date format\", function () {",
+									"  const responseData = pm.response.json();",
+									"",
+									"  pm.expect(responseData).to.be.an('array');",
+									"  responseData.forEach(subscription => {",
+									"    pm.expect(subscription.start_date).to.match(/^\\d{4}-\\d{2}-\\d{2}$/);",
+									"  });",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+									"console.log(backend_url);\r",
+									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
+									"    var json_data = response.json()\r",
+									"    console.log(json_data);\r",
+									"\r",
+									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/subscription/my",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"subscription",
+								"my"
+							]
+						},
+						"description": "# Subscription Details\n\nThis endpoint retrieves the subscription details for the authenticated user.\n\n## Request\n\n`GET /api/v1/subscription/my`\n\n## Response\n\n- Status: 200\n- Content-Type: application/json\n    \n\nExample response:\n\n``` json\n[\n    {\n        \"plan\": \"\",\n        \"amount\": 0,\n        \"start_date\": \"\",\n        \"is_valid\": true,\n        \"end_date\": \"\",\n        \"duration\": \"\",\n        \"amount_paid\": 0,\n        \"actual_amount\": 0,\n        \"apps_subscribed_to\": [\n            {\n                \"id\": 0,\n                \"name\": \"\",\n                \"description\": \"\"\n            }\n        ]\n    }\n]\n\n ```"
+					},
+					"response": [
+						{
+							"name": "how user subscrtption will look",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{TOKEN}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BACKEND_URL}}/api/v1/subscription/my",
+									"host": [
+										"{{BACKEND_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"subscription",
+										"my"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Sun, 28 Apr 2024 16:27:38 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.12.2"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, origin"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "301"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"plan\": \"All Tools\",\n        \"amount\": 200,\n        \"start_date\": \"2024-04-28\",\n        \"is_valid\": true,\n        \"end_date\": \"2024-05-28\",\n        \"duration\": \"Monthly\",\n        \"amount_paid\": 200,\n        \"actual_amount\": 999,\n        \"apps_subscribed_to\": [\n            {\n                \"id\": 3,\n                \"name\": \"8Product Worktools\",\n                \"description\": \"hbhjb\"\n            },\n            {\n                \"id\": 4,\n                \"name\": \"Product IQ\",\n                \"description\": \"jhjhbjh\"\n            }\n        ]\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "payment intent",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+									"console.log(backend_url);\r",
+									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
+									"    var json_data = response.json()\r",
+									"    console.log(json_data);\r",
+									"\r",
+									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{TOKEN}}",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/subscription/payment-intent/plan/1/duration/Monthly",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"subscription",
+								"payment-intent",
+								"plan",
+								"1",
+								"duration",
+								"Monthly"
+							]
+						}
 					},
 					"response": []
 				}
