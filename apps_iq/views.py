@@ -13,7 +13,7 @@ from users.referal import check_and_reward_referer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from gpt.helper import get_response
+from gpt.helper import get_response, get_response_worktools
 
 MIN_LEN = 72
 
@@ -327,33 +327,33 @@ def get_skills(request, app_id, categorie_id):
 @api_view(['POST'])
 @isAuth
 def get_skill_responce(request, user, skill_id):
-    skill = Skill.objects.get(id=skill_id)
+    answer = request.data['answer'];                          # assuming answer is of type json and now a dict
+    skill = Skill.objects.filter(id=skill_id).first()
     if (not skill):
         return Response({
             'message': 'No skill found'
         }, status=404)
     user = User.objects.get(id=user['id'])
+
+    result = None
+    try:
+        result = get_response_worktools(answer)
+    except:
+        return Response({"error": "Error generating evaluation!"}, status=500)
+
     skill_response = SkillResponses.objects.create(
         user=user,
         skill=skill,
         answer=request.data['answer'],
+        result= result
     )
     skill_response.save()
-
-    question = Question.objects.filter(skill_id=skill_id).order_by('id')
 
     # send the saved response
     return Response({
         'id': skill_response.id,
         'answer': skill_response.answer,
-        'skill': skill_response.skill.id,
-        'user': skill_response.user.id,
-        'question': [{
-            'id': q.id,
-            'name': q.name,
-            'placeholder': q.placeholder,
-            'type': q.type,
-        } for q in question]
+        'result': skill_response.result
     })
 
 

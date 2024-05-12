@@ -6,9 +6,9 @@ from rest_framework.response import Response
 import stripe
 from django.utils import timezone
 
-from .models import Plan, SubscriptionPayment, Coupon, PlanType
+from .models import Plan, SubscriptionPayment, Coupon, PlanType, SubscriptionTrack
 from users.isAuth import isAuth
-from .helper import handle_checkout_session
+from .helper import handle_checkout_session, get_end_date
 from users.models import User
 
 
@@ -56,8 +56,9 @@ def get_all_plans(request, user):
 
 @ api_view(['POST'])
 @ isAuth
-def create_payment_intent(request, user: dict, plan_id, duration):
+def create_payment_intent(request, user, plan_id, duration):
     plan = Plan.objects.filter(id=plan_id).first()
+    
     print(plan)
 
     if not plan:
@@ -65,42 +66,79 @@ def create_payment_intent(request, user: dict, plan_id, duration):
 
     if (duration not in [plan_duration.value for plan_duration in PlanType]):
         return Response({'error': "Duration must be "+"/".join([plan_duration.value for plan_duration in PlanType])}, status=404)
-
+    
+    user = User.objects.get(id=user['id'])
     plan_price = plan.annual_price if duration == PlanType.ANNUAL else plan.monthly_price
 
-    checkout_session = stripe.checkout.Session.create(
-        payment_method_types=['card'],
-        line_items=[{
-            'price_data': {
-                'currency': 'inr',
-                'product_data': {
-                    'name': plan.name,
-                    'description': plan.description,
 
-                },
-                'unit_amount': int(plan_price*100),
-            },
-            'quantity': 1,
-        }],
-        metadata={
-            'user_id': user['id'],
-            'plan_id': plan_id,
-        },
-        mode='payment',
-        success_url=settings.PAYMENT_SUCCESS_URL,
-        cancel_url=settings.PAYMENT_CANCEL_URL,
+    subscription_track = SubscriptionTrack.objects.create(
+        user = user,
+        plan = plan,
+        amount = plan_price,
+        duration = duration,
     )
-    print("hello")
-    print(checkout_session)
-    print("bye")
 
-    # return Response("success");
+    customer = stripe.Customer.create()
+    ephemeral_key = stripe.EphemeralKey.create(customer = customer.id, stripe_version= "2023-10-16")
+    
+    payment_intent = stripe.PaymentIntent.create(
+        amount=int(plan_price*100), 
+        currency='inr',
+        customer=customer.id,
+        description="ProductIQ payment service",
+        metadata={
+            "user_id": user.id,
+            "plan_id": plan.id,
+            "ephemeral_key": ephemeral_key,
+            "customer_id": customer.id,
+            "subscription_track_id": subscription_track.id, 
+            "amount": plan_price
+        }
+    )
+
+    
 
     return Response({
-        'id': checkout_session.id,
-        'payment_intent': checkout_session.payment_intent,
-        'client_secret': checkout_session.client_secret,
+        "payment_intent": payment_intent,
+        "ephemeral_key": ephemeral_key,
+        "customer": customer.id,
+        "publishable_key": settings.STRIPE_PUBLISHABLE_KEY
     })
+    # checkout_session = stripe.checkout.Session.create(
+    #     payment_method_types=['card'],
+    #     line_items=[{
+    #         'price_data': {
+    #             'currency': 'inr',
+    #             'product_data': {
+    #                 'name': plan.name,
+    #                 'description': plan.description,
+
+    #             },
+    #             'unit_amount': int(plan_price*100),
+    #         },
+    #         'quantity': 1,
+    #     }],
+    #     metadata={
+    #         'user_id': user['id'],
+    #         'plan_id': plan_id,
+    #     },
+    #     mode='payment',
+    #     success_url=settings.PAYMENT_SUCCESS_URL,
+    #     cancel_url=settings.PAYMENT_CANCEL_URL,
+    # )
+    # print("hello")
+    # print(checkout_session)
+    # print("bye")
+
+    # # return Response("success");
+
+    # return Response({
+    #     'id': checkout_session.id,
+    #     'payment_intent': checkout_session.payment_intent,
+    #     'client_secret': checkout_session.client_secret,
+    # })
+
+    
 
 
 # webhook implementation
@@ -123,11 +161,13 @@ def stripe_webhook(request):
         return Response({'error': e}, status=400)
 
     # Handle the event
-    if event['type'] == 'checkout.session.completed':
+    print(event)
+    if event['type'] == 'payment_intent.succeeded':
+        print(event)
         session = event['data']['object']
 
         # Fulfill the purchase...
-        handle_checkout_session(session)
+        # handle_checkout_session(session)
 
     return Response({'status': 'success'}, status=200)
 
@@ -140,8 +180,7 @@ def get_my_subscriptions(request, user):
     return Response([{
         'plan': subscription.plan.name,
         'start_date': subscription.start_date,
-        'is_valid': subscription.end_date >= timezone.now().date(),
-        'end_date': subscription.end_date,
+        'is_valid': subscription.end_date  >= timezone.now().date(),
         'duration': subscription.duration,
         'amount_paid': subscription.amount,
         'actual_amount': subscription.plan.annual_price if subscription.duration == PlanType.ANNUAL else subscription.plan.monthly_price,

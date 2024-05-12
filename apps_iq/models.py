@@ -136,6 +136,7 @@ class SkillResponses(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
     answer = models.JSONField()
+    result = models.JSONField()
 
     class Meta:
         verbose_name = " Product_Worktools_Response"

@@ -81,6 +81,35 @@ class Plan(models.Model):
     #         subscription = None
     #     return subscription
 
+class SubscriptionTrackStatus(Enum):
+    INITIATED = "INITIATED"
+    SUCCESS = "SUCCESS"
+    FAILURE = "FAILURE"
+
+
+class SubscriptionTrack(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    plan = models.ForeignKey(Plan, on_delete=models.SET_NULL, null=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    duration = models.CharField(max_length=10, choices=[(
+        tag.value, tag.value) for tag in PlanType], default=PlanType.MONTHLY.value)
+    initiation_time = models.DateTimeField(default=timezone.now)
+    payment_conformation_time = models.DateTimeField(default=None, null=True)
+    payment_failed_time = models.DateTimeField(default=None, null=True)
+
+    payment_status = models.CharField(max_length=20, choices=[(
+        status.value, status.value) for status in SubscriptionTrackStatus], default=SubscriptionTrackStatus.INITIATED)
+
+    def handle_success(self):
+        self.payment_conformation_time = timezone.now()
+        self.payment_status = SubscriptionTrackStatus.SUCCESS
+        self.save()
+
+    def handle_failure(self):
+        self.payment_failed_time = timezone.now()
+        self.payment_status = SubscriptionTrackStatus.FAILURE
+        self.save()
+
 
 class SubscriptionPayment(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
@@ -92,10 +121,21 @@ class SubscriptionPayment(models.Model):
     payment_date = models.DateField(default=timezone.now)
 
     start_date = models.DateField(default=timezone.now)
-    end_date = models.DateField()
 
     def __str__(self):
         return f"{self.user.username} - Payment for {self.plan.name}"
+
+    @classmethod
+    def on_successful_payment(cls, subscription_track: "SubscriptionTrack") -> bool:
+        subscription_payment = cls(
+            user=subscription_track.user,
+            plan=subscription_track.plan,
+            duration=subscription_track.duration,
+            amount=subscription_track.amount,
+        )
+
+        subscription_payment.save()
+        return subscription_payment
 
 
 class DiscountType(Enum):
@@ -108,7 +148,7 @@ class Coupon(models.Model):
     discount_in_decimal = models.DecimalField(
         max_digits=10, decimal_places=2, default=0)
     flat_discount = models.DecimalField(
-        max_digits=10, decimal_places=2, default=0) 
+        max_digits=10, decimal_places=2, default=0)
     discount_type = models.CharField(max_length=10, choices=[(
         tag.value, tag.value) for tag in DiscountType], default='percentage')
 
