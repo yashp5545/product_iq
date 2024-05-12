@@ -4,7 +4,7 @@
 		"name": "productiq",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "25553200",
-		"_collection_link": "https://www.postman.com/se-project-iiita/workspace/product-iq/collection/25553200-71738981-55f0-4f16-89ca-96f2f66033ae?action=share&source=collection_link&creator=25553200"
+		"_collection_link": "https://www.postman.com/se-project-iiita/workspace/205b6fb4-a26c-467a-9c98-984db9ccb6aa/collection/25553200-71738981-55f0-4f16-89ca-96f2f66033ae?action=share&source=collection_link&creator=25553200"
 	},
 	"item": [
 		{
@@ -590,6 +590,1095 @@
 			"name": "App",
 			"item": [
 				{
+					"name": "product coach or module",
+					"item": [
+						{
+							"name": "module",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {",
+											"  pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Each object in the response array has all the required fields and correct data types\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('array');",
+											"    ",
+											"    responseData.forEach(function(item) {",
+											"        pm.expect(item).to.be.an('object');",
+											"        pm.expect(item.id).to.exist.and.to.be.a('number').and.to.be.at.least(0);",
+											"        pm.expect(item.module_name).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Module name should not be empty\").and.to.match(/^[a-zA-Z0-9]+$/, \"Module name should be a non-empty string with only alphanumeric characters\");",
+											"        pm.expect(item.description).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Description should not be empty\").and.to.have.lengthOf.at.most(255, \"Description should not exceed 255 characters\");",
+											"    });",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 200ms\", function () {",
+											"  pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+											"console.log(backend_url);\r",
+											"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
+											"    var json_data = response.json()\r",
+											"    console.log(json_data);\r",
+											"\r",
+											"    pm.globals.set(\"TOKEN\", json_data.token);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{TOKEN}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BACKEND_URL}}/api/v1/app/1/module",
+									"host": [
+										"{{BACKEND_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"app",
+										"1",
+										"module"
+									]
+								},
+								"description": "This endpoint sends an HTTP GET request to retrieve information about the app with ID 1. The response will be in JSON format and will include the ID, module name, and description of the app. along ith complition and result. complition will tell how much is complited and result will be given for whole module if the molule is completed.\n\nThe response will have a status code of 200 indicating a successful request."
+							},
+							"response": []
+						},
+						{
+							"name": "challenge and lebel",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response has the required fields - id, challenge_name, description, and labels\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(responseData).to.be.an('array').that.is.not.empty;\r",
+											"    \r",
+											"    responseData.forEach(function(item) {\r",
+											"        pm.expect(item).to.have.property('id');\r",
+											"        pm.expect(item).to.have.property('challenge_name');\r",
+											"        pm.expect(item).to.have.property('description');\r",
+											"        pm.expect(item).to.have.property('labels').that.is.an('array').that.is.not.empty;\r",
+											"    });\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Labels array is present and contains expected number of elements\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(responseData).to.be.an('array');\r",
+											"    pm.expect(responseData[0].labels).to.be.an('array');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Challenge name should be a non-empty string\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(responseData).to.be.an('array');\r",
+											"    responseData.forEach(function(item) {\r",
+											"        pm.expect(item.challenge_name).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Challenge name should not be empty\");\r",
+											"    });\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Verify that level_name in labels array is a non-empty string\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('array');\r",
+											"    responseData.forEach(function(item) {\r",
+											"        pm.expect(item.labels).to.be.an('array');\r",
+											"        item.labels.forEach(function(label) {\r",
+											"            pm.expect(label.level_name).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");\r",
+											"        });\r",
+											"    });\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Content-Type header is application/json\", function () {\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Id is a non-negative integer\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('array');\r",
+											"    responseData.forEach(function(item) {\r",
+											"        pm.expect(item.id).to.be.a('number').and.to.be.at.least(0);\r",
+											"    });\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Description is a non-empty string\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('array');\r",
+											"    responseData.forEach(function(item) {\r",
+											"        pm.expect(item.description).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Description should not be empty\");\r",
+											"    });\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Level_name in labels array should be a non-empty string\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('array').that.is.not.empty;\r",
+											"    \r",
+											"    responseData.forEach(function (item) {\r",
+											"        pm.expect(item.labels).to.be.an('array').that.is.not.empty;\r",
+											"        \r",
+											"        item.labels.forEach(function (label) {\r",
+											"            pm.expect(label.level_name).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");\r",
+											"        });\r",
+											"    });\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+											"console.log(backend_url);\r",
+											"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
+											"    var json_data = response.json()\r",
+											"    console.log(json_data);\r",
+											"\r",
+											"    pm.globals.set(\"TOKEN\", json_data.token);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{TOKEN}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BACKEND_URL}}/api/v1/app/1/module/5",
+									"host": [
+										"{{BACKEND_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"app",
+										"1",
+										"module",
+										"5"
+									]
+								},
+								"description": "\nThis endpoint makes an HTTP GET request to retrieve information about a specific module in an app. The response will contain the ID, challenge name, description, and labels associated with the module. The response will be in JSON format with a status code of 200.\n"
+							},
+							"response": []
+						},
+						{
+							"name": "response",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+											"console.log(backend_url);\r",
+											"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
+											"    var json_data = response.json()\r",
+											"    console.log(json_data);\r",
+											"\r",
+											"    pm.globals.set(\"TOKEN\", json_data.token);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"pm.test(\"Response status code is 200\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Content type is application/json\", function () {\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Now object should exist in the response\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.now).to.exist;\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Previous object exists and is an object\", function () {\r",
+											"  const responseData = pm.response.json();\r",
+											"  \r",
+											"  pm.expect(responseData.previous).to.exist.and.to.be.an('object');\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Now and previous 'answer' fields should be empty\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(responseData.now.answer).to.be.empty;\r",
+											"    pm.expect(responseData.previous.answer).to.be.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Now and previous 'result' fields should be empty\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(responseData.now.result).to.be.empty;\r",
+											"    pm.expect(responseData.previous.result).to.be.empty;\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Now and previous objects should have evalution_result property\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData.now.evalution_result).to.exist;\r",
+											"    pm.expect(responseData.previous.evalution_result).to.exist;\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Now and previous 'result' object should be empty\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData.now.result).to.be.an('object').that.is.empty;\r",
+											"    pm.expect(responseData.previous.result).to.be.an('object').that.is.empty;\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Now answer field should be a string\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    pm.expect(responseData.now.answer).to.be.a('string');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Now evalution_result field should be a number\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    pm.expect(responseData.now.evalution_result).to.be.a('number');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{TOKEN}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"answer\": \"hii\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BACKEND_URL}}/api/v1/app/response/lebel/1",
+									"host": [
+										"{{BACKEND_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"app",
+										"response",
+										"lebel",
+										"1"
+									]
+								},
+								"description": "This API endpoint is a POST request to {{BACKEND_URL}}/api/v1/app/response/lebel/1. It is used to submit an answer for evaluation.\n\n### Request Body\n\n- The request body should be in raw format and include a JSON object with the \"answer\" key.\n    \n\n### Response\n\nUpon successful execution, the API returns a status code of 200 and a JSON object with the following structure:\n\n``` json\n{\n    \"now\": {\n        \"answer\": \"\",\n        \"result\": {},\n        \"evalution_result\": 0\n    },\n    \"previous\": {\n        \"answer\": \"\",\n        \"result\": {},\n        \"evalution_result\": 0\n    }\n}\n\n ```\n\nThe \"now\" and \"previous\" objects contain the submitted answer, evaluation result, and additional information."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "product worktools or categorie",
+					"item": [
+						{
+							"name": "categorie",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {",
+											"  pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Each object in the response array has all the required fields and correct data types\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('array');",
+											"    ",
+											"    responseData.forEach(function(item) {",
+											"        pm.expect(item).to.be.an('object');",
+											"        pm.expect(item.id).to.exist.and.to.be.a('number').and.to.be.at.least(0);",
+											"        pm.expect(item.module_name).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Module name should not be empty\").and.to.match(/^[a-zA-Z0-9]+$/, \"Module name should be a non-empty string with only alphanumeric characters\");",
+											"        pm.expect(item.description).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Description should not be empty\").and.to.have.lengthOf.at.most(255, \"Description should not exceed 255 characters\");",
+											"    });",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 200ms\", function () {",
+											"  pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+											"console.log(backend_url);\r",
+											"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
+											"    var json_data = response.json()\r",
+											"    console.log(json_data);\r",
+											"\r",
+											"    pm.globals.set(\"TOKEN\", json_data.token);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{TOKEN}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BACKEND_URL}}/api/v1/app/1/categorie",
+									"host": [
+										"{{BACKEND_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"app",
+										"1",
+										"categorie"
+									]
+								},
+								"description": "This endpoint sends an HTTP GET request to retrieve information about the app with ID 1. The response will be in JSON format and will include the ID, module name, and description of the app. along ith complition and result. complition will tell how much is complited and result will be given for whole module if the molule is completed.\n\nThe response will have a status code of 200 indicating a successful request."
+							},
+							"response": []
+						},
+						{
+							"name": "skills",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {",
+											"  pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Each object in the response array has all the required fields and correct data types\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('array');",
+											"    ",
+											"    responseData.forEach(function(item) {",
+											"        pm.expect(item).to.be.an('object');",
+											"        pm.expect(item.id).to.exist.and.to.be.a('number').and.to.be.at.least(0);",
+											"        pm.expect(item.module_name).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Module name should not be empty\").and.to.match(/^[a-zA-Z0-9]+$/, \"Module name should be a non-empty string with only alphanumeric characters\");",
+											"        pm.expect(item.description).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Description should not be empty\").and.to.have.lengthOf.at.most(255, \"Description should not exceed 255 characters\");",
+											"    });",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 200ms\", function () {",
+											"  pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+											"console.log(backend_url);\r",
+											"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
+											"    var json_data = response.json()\r",
+											"    console.log(json_data);\r",
+											"\r",
+											"    pm.globals.set(\"TOKEN\", json_data.token);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{TOKEN}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BACKEND_URL}}/api/v1/app/2/categorie/1",
+									"host": [
+										"{{BACKEND_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"app",
+										"2",
+										"categorie",
+										"1"
+									]
+								},
+								"description": "This endpoint sends an HTTP GET request to retrieve information about the app with ID 1. The response will be in JSON format and will include the ID, module name, and description of the app. along ith complition and result. complition will tell how much is complited and result will be given for whole module if the molule is completed.\n\nThe response will have a status code of 200 indicating a successful request."
+							},
+							"response": [
+								{
+									"name": "skills",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "bearer {{TOKEN}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BACKEND_URL}}/api/v1/app/2/categorie/1",
+											"host": [
+												"{{BACKEND_URL}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"app",
+												"2",
+												"categorie",
+												"1"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Sat, 11 May 2024 22:09:12 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "WSGIServer/0.2 CPython/3.12.2"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept, origin"
+										},
+										{
+											"key": "Allow",
+											"value": "GET, OPTIONS"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Length",
+											"value": "467"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "same-origin"
+										},
+										{
+											"key": "Cross-Origin-Opener-Policy",
+											"value": "same-origin"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 1,\n        \"name\": \"worktool skill 1\",\n        \"description\": \"sdf\",\n        \"active\": true,\n        \"tags\": [\n            \"3\",\n            \"5\",\n            \"hhhh\"\n        ],\n        \"question_suggestion\": [\n            {\n                \"id\": 1,\n                \"field_name\": \"Describe your Persona\",\n                \"placeholder\": \"eg. Users aren’t adopting our product\",\n                \"type\": \"text\"\n            },\n            {\n                \"id\": 2,\n                \"field_name\": \"Jobs to be done\",\n                \"placeholder\": \"eg. Users aren’t adopting our product\",\n                \"type\": \"text\"\n            },\n            {\n                \"id\": 3,\n                \"field_name\": \"Also Consider (Optional)\",\n                \"placeholder\": \"eg. Users aren’t adopting our product\",\n                \"type\": \"textarea\"\n            }\n        ]\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "skill responce",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+											"console.log(backend_url);\r",
+											"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
+											"    var json_data = response.json()\r",
+											"    console.log(json_data);\r",
+											"\r",
+											"    pm.globals.set(\"TOKEN\", json_data.token);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"pm.test(\"Response status code is 200\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Content type is application/json\", function () {\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Now object should exist in the response\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.now).to.exist;\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Previous object exists and is an object\", function () {\r",
+											"  const responseData = pm.response.json();\r",
+											"  \r",
+											"  pm.expect(responseData.previous).to.exist.and.to.be.an('object');\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Now and previous 'answer' fields should be empty\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(responseData.now.answer).to.be.empty;\r",
+											"    pm.expect(responseData.previous.answer).to.be.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Now and previous 'result' fields should be empty\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(responseData.now.result).to.be.empty;\r",
+											"    pm.expect(responseData.previous.result).to.be.empty;\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Now and previous objects should have evalution_result property\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData.now.evalution_result).to.exist;\r",
+											"    pm.expect(responseData.previous.evalution_result).to.exist;\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Now and previous 'result' object should be empty\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData.now.result).to.be.an('object').that.is.empty;\r",
+											"    pm.expect(responseData.previous.result).to.be.an('object').that.is.empty;\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Now answer field should be a string\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    pm.expect(responseData.now.answer).to.be.a('string');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Now evalution_result field should be a number\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    pm.expect(responseData.now.evalution_result).to.be.a('number');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"answer\": {\r\n            \"Jobs to be done\": \"ans 1\",\r\n            \"Describe your Persona\": \"ans2\",\r\n\t\t\t\"Also Consider (Optional)\": \"eg. Users aren’t adopting our product\"\r\n        }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BACKEND_URL}}/api/v1/app/response/skill/1",
+									"host": [
+										"{{BACKEND_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"app",
+										"response",
+										"skill",
+										"1"
+									]
+								},
+								"description": "\nThis API endpoint is a POST request to {{BACKEND_URL}}/api/v1/app/response/lebel/1. It is used to submit an answer for evaluation.\n\n### Request Body\n- The request body should be in raw format and include a JSON object with the \"answer\" key.\n\n### Response\nUpon successful execution, the API returns a status code of 200 and a JSON object with the following structure:\n```json\n{\n    \"now\": {\n        \"answer\": \"\",\n        \"result\": {},\n        \"evalution_result\": 0\n    },\n    \"previous\": {\n        \"answer\": \"\",\n        \"result\": {},\n        \"evalution_result\": 0\n    }\n}\n```\nThe \"now\" and \"previous\" objects contain the submitted answer, evaluation result, and additional information.\n\n"
+							},
+							"response": [
+								{
+									"name": "skill responce",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "bearer {{TOKEN}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"answer\": {\r\n            \"Jobs to be done\": \"ans 1\",\r\n            \"Describe your Persona\": \"ans2\",\r\n\t\t\t\"Also Consider (Optional)\": \"eg. Users aren’t adopting our product\"\r\n        }\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BACKEND_URL}}/api/v1/app/response/skill/1",
+											"host": [
+												"{{BACKEND_URL}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"app",
+												"response",
+												"skill",
+												"1"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Sat, 11 May 2024 22:13:21 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "WSGIServer/0.2 CPython/3.12.2"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept, origin"
+										},
+										{
+											"key": "Allow",
+											"value": "OPTIONS, POST"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1681"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "same-origin"
+										},
+										{
+											"key": "Cross-Origin-Opener-Policy",
+											"value": "same-origin"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": 2,\n    \"answer\": {\n        \"Jobs to be done\": \"ans 1\",\n        \"Describe your Persona\": \"ans2\",\n        \"Also Consider (Optional)\": \"eg. Users aren’t adopting our product\"\n    },\n    \"result\": {\n        \"prd_title\": \"Smart Home Energy Management System\",\n        \"prd_category\": \"Smart Home Automation\",\n        \"prd_tags\": \"energy efficiency, IoT, home automation\",\n        \"prd_content\": {\n            \"problem_statement\": \"Households want to reduce energy consumption and lower electricity bills.\",\n            \"objective\": \"To develop a smart home energy management system that empowers users to monitor and control their energy usage efficiently.\",\n            \"persona\": \"Sarah, a working mother who is environmentally conscious and wants to reduce her household's carbon footprint while efficiently managing energy costs.\",\n            \"risks_assumptions\": \"Potential challenges may include user adoption hurdles due to complexity or lack of perceived value in the features.\",\n            \"high_level_solution\": \"Provide a user-friendly mobile app and integrated smart devices that offer real-time insights and automated control of energy usage.\",\n            \"features_list\": [\n                {\n                    \"feature_name\": \"Real-time Energy Monitoring\",\n                    \"feature_detail_points\": [\n                        \"Track energy consumption by individual devices\",\n                        \"Receive alerts for unusual usage patterns\"\n                    ]\n                },\n                {\n                    \"feature_name\": \"Smart Device Control\",\n                    \"feature_detail_points\": [\n                        \"Remotely turn devices on/off for energy optimization\",\n                        \"Set schedules for efficient operation\"\n                    ]\n                },\n                {\n                    \"feature_name\": \"Energy Usage Recommendations\",\n                    \"feature_detail_points\": [\n                        \"Receive personalized tips to reduce energy wastage\",\n                        \"Optimize energy consumption based on lifestyle patterns\"\n                    ]\n                }\n            ],\n            \"success_metrics\": \"Increase in user engagement through daily app usage, decrease in energy bills for users, high customer satisfaction scores.\"\n        }\n    }\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "product iq or section",
+					"item": [
+						{
+							"name": "section",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {",
+											"  pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Each object in the response array has all the required fields and correct data types\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('array');",
+											"    ",
+											"    responseData.forEach(function(item) {",
+											"        pm.expect(item).to.be.an('object');",
+											"        pm.expect(item.id).to.exist.and.to.be.a('number').and.to.be.at.least(0);",
+											"        pm.expect(item.module_name).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Module name should not be empty\").and.to.match(/^[a-zA-Z0-9]+$/, \"Module name should be a non-empty string with only alphanumeric characters\");",
+											"        pm.expect(item.description).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Description should not be empty\").and.to.have.lengthOf.at.most(255, \"Description should not exceed 255 characters\");",
+											"    });",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 200ms\", function () {",
+											"  pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+											"console.log(backend_url);\r",
+											"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
+											"    var json_data = response.json()\r",
+											"    console.log(json_data);\r",
+											"\r",
+											"    pm.globals.set(\"TOKEN\", json_data.token);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{TOKEN}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/v1/app/3/section/topics",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"v1",
+										"app",
+										"3",
+										"section",
+										"topics"
+									]
+								},
+								"description": "This endpoint sends an HTTP GET request to retrieve information about the app with ID 1. The response will be in JSON format and will include the ID, module name, and description of the app. along ith complition and result. complition will tell how much is complited and result will be given for whole module if the molule is completed.\n\nThe response will have a status code of 200 indicating a successful request."
+							},
+							"response": []
+						},
+						{
+							"name": "lession",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {",
+											"  pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Each object in the response array has all the required fields and correct data types\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('array');",
+											"    ",
+											"    responseData.forEach(function(item) {",
+											"        pm.expect(item).to.be.an('object');",
+											"        pm.expect(item.id).to.exist.and.to.be.a('number').and.to.be.at.least(0);",
+											"        pm.expect(item.module_name).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Module name should not be empty\").and.to.match(/^[a-zA-Z0-9]+$/, \"Module name should be a non-empty string with only alphanumeric characters\");",
+											"        pm.expect(item.description).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Description should not be empty\").and.to.have.lengthOf.at.most(255, \"Description should not exceed 255 characters\");",
+											"    });",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 200ms\", function () {",
+											"  pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
+											"console.log(backend_url);\r",
+											"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
+											"    var json_data = response.json()\r",
+											"    console.log(json_data);\r",
+											"\r",
+											"    pm.globals.set(\"TOKEN\", json_data.token);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{TOKEN}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BACKEND_URL}}/api/v1/app/3/section/topics/1/lessions",
+									"host": [
+										"{{BACKEND_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"app",
+										"3",
+										"section",
+										"topics",
+										"1",
+										"lessions"
+									]
+								},
+								"description": "This endpoint sends an HTTP GET request to retrieve information about the app with ID 1. The response will be in JSON format and will include the ID, module name, and description of the app. along ith complition and result. complition will tell how much is complited and result will be given for whole module if the molule is completed.\n\nThe response will have a status code of 200 indicating a successful request."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "search module challenges section",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/app/search/Product?search_lebel=module&depth=3",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"app",
+								"search",
+								"Product"
+							],
+							"query": [
+								{
+									"key": "search_lebel",
+									"value": "module"
+								},
+								{
+									"key": "depth",
+									"value": "3"
+								}
+							]
+						},
+						"description": "search_lebel can be \\[module, categorie, section\\]  \ndepth will define how much depth you want to go inside each app\n\nlike for example value of (search_lebel and depth) is (module and 2) then the result will be on basic of module and challenge only. And if depth is 3 then search eise be on basic of module, challenge and lebel.\n\nif no search_lebel is provided then the search on whole app is performed\n\n[{{BACKEND_URL}}/api/v1/app/search/<searchparameter< a=\"\">&gt;[?search_lebel=module&amp;depth=3]</searchparameter<>]({{BACKEND_URL}}/api/v1/app/search/<search)\n\n[different examples are given.]({{BACKEND_URL}}/api/v1/app/search/<search)"
+					},
+					"response": []
+				},
+				{
 					"name": "all",
 					"event": [
 						{
@@ -688,1080 +1777,6 @@
 							]
 						},
 						"description": "\nThis endpoint sends an HTTP GET request to retrieve all the available apps. The response will be in JSON format and will include an array of objects, where each object represents an app with its ID, name, and description.\n\nExample response:\n```json\n[\n    {\n        \"id\": 0,\n        \"app_name\": \"\",\n        \"description\": \"\"\n    }\n]\n```\n"
-					},
-					"response": []
-				},
-				{
-					"name": "module",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Response status code is 200\", function () {",
-									"  pm.expect(pm.response.code).to.equal(200);",
-									"});",
-									"",
-									"pm.test(\"Content-Type is application/json\", function () {",
-									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
-									"});",
-									"",
-									"pm.test(\"Each object in the response array has all the required fields and correct data types\", function () {",
-									"    const responseData = pm.response.json();",
-									"    ",
-									"    pm.expect(responseData).to.be.an('array');",
-									"    ",
-									"    responseData.forEach(function(item) {",
-									"        pm.expect(item).to.be.an('object');",
-									"        pm.expect(item.id).to.exist.and.to.be.a('number').and.to.be.at.least(0);",
-									"        pm.expect(item.module_name).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Module name should not be empty\").and.to.match(/^[a-zA-Z0-9]+$/, \"Module name should be a non-empty string with only alphanumeric characters\");",
-									"        pm.expect(item.description).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Description should not be empty\").and.to.have.lengthOf.at.most(255, \"Description should not exceed 255 characters\");",
-									"    });",
-									"});",
-									"",
-									"pm.test(\"Response time is less than 200ms\", function () {",
-									"  pm.expect(pm.response.responseTime).to.be.below(200);",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
-									"console.log(backend_url);\r",
-									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
-									"    var json_data = response.json()\r",
-									"    console.log(json_data);\r",
-									"\r",
-									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "bearer {{TOKEN}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{BACKEND_URL}}/api/v1/app/1/module",
-							"host": [
-								"{{BACKEND_URL}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"app",
-								"1",
-								"module"
-							]
-						},
-						"description": "This endpoint sends an HTTP GET request to retrieve information about the app with ID 1. The response will be in JSON format and will include the ID, module name, and description of the app. along ith complition and result. complition will tell how much is complited and result will be given for whole module if the molule is completed.\n\nThe response will have a status code of 200 indicating a successful request."
-					},
-					"response": []
-				},
-				{
-					"name": "challenge and lebel",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Response status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Response has the required fields - id, challenge_name, description, and labels\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"\r",
-									"    pm.expect(responseData).to.be.an('array').that.is.not.empty;\r",
-									"    \r",
-									"    responseData.forEach(function(item) {\r",
-									"        pm.expect(item).to.have.property('id');\r",
-									"        pm.expect(item).to.have.property('challenge_name');\r",
-									"        pm.expect(item).to.have.property('description');\r",
-									"        pm.expect(item).to.have.property('labels').that.is.an('array').that.is.not.empty;\r",
-									"    });\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Labels array is present and contains expected number of elements\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"\r",
-									"    pm.expect(responseData).to.be.an('array');\r",
-									"    pm.expect(responseData[0].labels).to.be.an('array');\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Challenge name should be a non-empty string\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"\r",
-									"    pm.expect(responseData).to.be.an('array');\r",
-									"    responseData.forEach(function(item) {\r",
-									"        pm.expect(item.challenge_name).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Challenge name should not be empty\");\r",
-									"    });\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Verify that level_name in labels array is a non-empty string\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData).to.be.an('array');\r",
-									"    responseData.forEach(function(item) {\r",
-									"        pm.expect(item.labels).to.be.an('array');\r",
-									"        item.labels.forEach(function(label) {\r",
-									"            pm.expect(label.level_name).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");\r",
-									"        });\r",
-									"    });\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Content-Type header is application/json\", function () {\r",
-									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Id is a non-negative integer\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData).to.be.an('array');\r",
-									"    responseData.forEach(function(item) {\r",
-									"        pm.expect(item.id).to.be.a('number').and.to.be.at.least(0);\r",
-									"    });\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Description is a non-empty string\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData).to.be.an('array');\r",
-									"    responseData.forEach(function(item) {\r",
-									"        pm.expect(item.description).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Description should not be empty\");\r",
-									"    });\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Level_name in labels array should be a non-empty string\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData).to.be.an('array').that.is.not.empty;\r",
-									"    \r",
-									"    responseData.forEach(function (item) {\r",
-									"        pm.expect(item.labels).to.be.an('array').that.is.not.empty;\r",
-									"        \r",
-									"        item.labels.forEach(function (label) {\r",
-									"            pm.expect(label.level_name).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");\r",
-									"        });\r",
-									"    });\r",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
-									"console.log(backend_url);\r",
-									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
-									"    var json_data = response.json()\r",
-									"    console.log(json_data);\r",
-									"\r",
-									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "bearer {{TOKEN}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{BACKEND_URL}}/api/v1/app/1/module/5",
-							"host": [
-								"{{BACKEND_URL}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"app",
-								"1",
-								"module",
-								"5"
-							]
-						},
-						"description": "\nThis endpoint makes an HTTP GET request to retrieve information about a specific module in an app. The response will contain the ID, challenge name, description, and labels associated with the module. The response will be in JSON format with a status code of 200.\n"
-					},
-					"response": []
-				},
-				{
-					"name": "response",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
-									"console.log(backend_url);\r",
-									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
-									"    var json_data = response.json()\r",
-									"    console.log(json_data);\r",
-									"\r",
-									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"\r",
-									"pm.test(\"Response status code is 200\", function () {\r",
-									"    pm.expect(pm.response.code).to.equal(200);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Content type is application/json\", function () {\r",
-									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Now object should exist in the response\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData).to.be.an('object');\r",
-									"    pm.expect(responseData.now).to.exist;\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Previous object exists and is an object\", function () {\r",
-									"  const responseData = pm.response.json();\r",
-									"  \r",
-									"  pm.expect(responseData.previous).to.exist.and.to.be.an('object');\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Now and previous 'answer' fields should be empty\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"\r",
-									"    pm.expect(responseData.now.answer).to.be.empty;\r",
-									"    pm.expect(responseData.previous.answer).to.be.empty;\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Now and previous 'result' fields should be empty\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"\r",
-									"    pm.expect(responseData.now.result).to.be.empty;\r",
-									"    pm.expect(responseData.previous.result).to.be.empty;\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Now and previous objects should have evalution_result property\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData.now.evalution_result).to.exist;\r",
-									"    pm.expect(responseData.previous.evalution_result).to.exist;\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Now and previous 'result' object should be empty\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData.now.result).to.be.an('object').that.is.empty;\r",
-									"    pm.expect(responseData.previous.result).to.be.an('object').that.is.empty;\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Now answer field should be a string\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    pm.expect(responseData.now.answer).to.be.a('string');\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Now evalution_result field should be a number\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    pm.expect(responseData.now.evalution_result).to.be.a('number');\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "bearer {{TOKEN}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"answer\": \"hii\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{BACKEND_URL}}/api/v1/app/response/lebel/1",
-							"host": [
-								"{{BACKEND_URL}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"app",
-								"response",
-								"lebel",
-								"1"
-							]
-						},
-						"description": "This API endpoint is a POST request to {{BACKEND_URL}}/api/v1/app/response/lebel/1. It is used to submit an answer for evaluation.\n\n### Request Body\n\n- The request body should be in raw format and include a JSON object with the \"answer\" key.\n    \n\n### Response\n\nUpon successful execution, the API returns a status code of 200 and a JSON object with the following structure:\n\n``` json\n{\n    \"now\": {\n        \"answer\": \"\",\n        \"result\": {},\n        \"evalution_result\": 0\n    },\n    \"previous\": {\n        \"answer\": \"\",\n        \"result\": {},\n        \"evalution_result\": 0\n    }\n}\n\n ```\n\nThe \"now\" and \"previous\" objects contain the submitted answer, evaluation result, and additional information."
-					},
-					"response": []
-				},
-				{
-					"name": "categorie",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Response status code is 200\", function () {",
-									"  pm.expect(pm.response.code).to.equal(200);",
-									"});",
-									"",
-									"pm.test(\"Content-Type is application/json\", function () {",
-									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
-									"});",
-									"",
-									"pm.test(\"Each object in the response array has all the required fields and correct data types\", function () {",
-									"    const responseData = pm.response.json();",
-									"    ",
-									"    pm.expect(responseData).to.be.an('array');",
-									"    ",
-									"    responseData.forEach(function(item) {",
-									"        pm.expect(item).to.be.an('object');",
-									"        pm.expect(item.id).to.exist.and.to.be.a('number').and.to.be.at.least(0);",
-									"        pm.expect(item.module_name).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Module name should not be empty\").and.to.match(/^[a-zA-Z0-9]+$/, \"Module name should be a non-empty string with only alphanumeric characters\");",
-									"        pm.expect(item.description).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Description should not be empty\").and.to.have.lengthOf.at.most(255, \"Description should not exceed 255 characters\");",
-									"    });",
-									"});",
-									"",
-									"pm.test(\"Response time is less than 200ms\", function () {",
-									"  pm.expect(pm.response.responseTime).to.be.below(200);",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
-									"console.log(backend_url);\r",
-									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
-									"    var json_data = response.json()\r",
-									"    console.log(json_data);\r",
-									"\r",
-									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "bearer {{TOKEN}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{BACKEND_URL}}/api/v1/app/1/categorie",
-							"host": [
-								"{{BACKEND_URL}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"app",
-								"1",
-								"categorie"
-							]
-						},
-						"description": "This endpoint sends an HTTP GET request to retrieve information about the app with ID 1. The response will be in JSON format and will include the ID, module name, and description of the app. along ith complition and result. complition will tell how much is complited and result will be given for whole module if the molule is completed.\n\nThe response will have a status code of 200 indicating a successful request."
-					},
-					"response": []
-				},
-				{
-					"name": "skills",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Response status code is 200\", function () {",
-									"  pm.expect(pm.response.code).to.equal(200);",
-									"});",
-									"",
-									"pm.test(\"Content-Type is application/json\", function () {",
-									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
-									"});",
-									"",
-									"pm.test(\"Each object in the response array has all the required fields and correct data types\", function () {",
-									"    const responseData = pm.response.json();",
-									"    ",
-									"    pm.expect(responseData).to.be.an('array');",
-									"    ",
-									"    responseData.forEach(function(item) {",
-									"        pm.expect(item).to.be.an('object');",
-									"        pm.expect(item.id).to.exist.and.to.be.a('number').and.to.be.at.least(0);",
-									"        pm.expect(item.module_name).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Module name should not be empty\").and.to.match(/^[a-zA-Z0-9]+$/, \"Module name should be a non-empty string with only alphanumeric characters\");",
-									"        pm.expect(item.description).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Description should not be empty\").and.to.have.lengthOf.at.most(255, \"Description should not exceed 255 characters\");",
-									"    });",
-									"});",
-									"",
-									"pm.test(\"Response time is less than 200ms\", function () {",
-									"  pm.expect(pm.response.responseTime).to.be.below(200);",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
-									"console.log(backend_url);\r",
-									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
-									"    var json_data = response.json()\r",
-									"    console.log(json_data);\r",
-									"\r",
-									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "bearer {{TOKEN}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{BACKEND_URL}}/api/v1/app/2/categorie/1",
-							"host": [
-								"{{BACKEND_URL}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"app",
-								"2",
-								"categorie",
-								"1"
-							]
-						},
-						"description": "This endpoint sends an HTTP GET request to retrieve information about the app with ID 1. The response will be in JSON format and will include the ID, module name, and description of the app. along ith complition and result. complition will tell how much is complited and result will be given for whole module if the molule is completed.\n\nThe response will have a status code of 200 indicating a successful request."
-					},
-					"response": [
-						{
-							"name": "skills",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "bearer {{TOKEN}}"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BACKEND_URL}}/api/v1/app/2/categorie/1",
-									"host": [
-										"{{BACKEND_URL}}"
-									],
-									"path": [
-										"api",
-										"v1",
-										"app",
-										"2",
-										"categorie",
-										"1"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Date",
-									"value": "Sat, 11 May 2024 22:09:12 GMT"
-								},
-								{
-									"key": "Server",
-									"value": "WSGIServer/0.2 CPython/3.12.2"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Vary",
-									"value": "Accept, origin"
-								},
-								{
-									"key": "Allow",
-									"value": "GET, OPTIONS"
-								},
-								{
-									"key": "X-Frame-Options",
-									"value": "DENY"
-								},
-								{
-									"key": "Content-Length",
-									"value": "467"
-								},
-								{
-									"key": "X-Content-Type-Options",
-									"value": "nosniff"
-								},
-								{
-									"key": "Referrer-Policy",
-									"value": "same-origin"
-								},
-								{
-									"key": "Cross-Origin-Opener-Policy",
-									"value": "same-origin"
-								}
-							],
-							"cookie": [],
-							"body": "[\n    {\n        \"id\": 1,\n        \"name\": \"worktool skill 1\",\n        \"description\": \"sdf\",\n        \"active\": true,\n        \"tags\": [\n            \"3\",\n            \"5\",\n            \"hhhh\"\n        ],\n        \"question_suggestion\": [\n            {\n                \"id\": 1,\n                \"field_name\": \"Describe your Persona\",\n                \"placeholder\": \"eg. Users aren’t adopting our product\",\n                \"type\": \"text\"\n            },\n            {\n                \"id\": 2,\n                \"field_name\": \"Jobs to be done\",\n                \"placeholder\": \"eg. Users aren’t adopting our product\",\n                \"type\": \"text\"\n            },\n            {\n                \"id\": 3,\n                \"field_name\": \"Also Consider (Optional)\",\n                \"placeholder\": \"eg. Users aren’t adopting our product\",\n                \"type\": \"textarea\"\n            }\n        ]\n    }\n]"
-						}
-					]
-				},
-				{
-					"name": "skill responce",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
-									"console.log(backend_url);\r",
-									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
-									"    var json_data = response.json()\r",
-									"    console.log(json_data);\r",
-									"\r",
-									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"\r",
-									"pm.test(\"Response status code is 200\", function () {\r",
-									"    pm.expect(pm.response.code).to.equal(200);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Content type is application/json\", function () {\r",
-									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Now object should exist in the response\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData).to.be.an('object');\r",
-									"    pm.expect(responseData.now).to.exist;\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Previous object exists and is an object\", function () {\r",
-									"  const responseData = pm.response.json();\r",
-									"  \r",
-									"  pm.expect(responseData.previous).to.exist.and.to.be.an('object');\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Now and previous 'answer' fields should be empty\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"\r",
-									"    pm.expect(responseData.now.answer).to.be.empty;\r",
-									"    pm.expect(responseData.previous.answer).to.be.empty;\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Now and previous 'result' fields should be empty\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"\r",
-									"    pm.expect(responseData.now.result).to.be.empty;\r",
-									"    pm.expect(responseData.previous.result).to.be.empty;\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Now and previous objects should have evalution_result property\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData.now.evalution_result).to.exist;\r",
-									"    pm.expect(responseData.previous.evalution_result).to.exist;\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Now and previous 'result' object should be empty\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData.now.result).to.be.an('object').that.is.empty;\r",
-									"    pm.expect(responseData.previous.result).to.be.an('object').that.is.empty;\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Now answer field should be a string\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    pm.expect(responseData.now.answer).to.be.a('string');\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Now evalution_result field should be a number\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    pm.expect(responseData.now.evalution_result).to.be.a('number');\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "bearer {{TOKEN}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"answer\": {\r\n            \"Jobs to be done\": \"ans 1\",\r\n            \"Describe your Persona\": \"ans2\",\r\n\t\t\t\"Also Consider (Optional)\": \"eg. Users aren’t adopting our product\"\r\n        }\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{BACKEND_URL}}/api/v1/app/response/skill/1",
-							"host": [
-								"{{BACKEND_URL}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"app",
-								"response",
-								"skill",
-								"1"
-							]
-						},
-						"description": "\nThis API endpoint is a POST request to {{BACKEND_URL}}/api/v1/app/response/lebel/1. It is used to submit an answer for evaluation.\n\n### Request Body\n- The request body should be in raw format and include a JSON object with the \"answer\" key.\n\n### Response\nUpon successful execution, the API returns a status code of 200 and a JSON object with the following structure:\n```json\n{\n    \"now\": {\n        \"answer\": \"\",\n        \"result\": {},\n        \"evalution_result\": 0\n    },\n    \"previous\": {\n        \"answer\": \"\",\n        \"result\": {},\n        \"evalution_result\": 0\n    }\n}\n```\nThe \"now\" and \"previous\" objects contain the submitted answer, evaluation result, and additional information.\n\n"
-					},
-					"response": [
-						{
-							"name": "skill responce",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "bearer {{TOKEN}}"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"answer\": {\r\n            \"Jobs to be done\": \"ans 1\",\r\n            \"Describe your Persona\": \"ans2\",\r\n\t\t\t\"Also Consider (Optional)\": \"eg. Users aren’t adopting our product\"\r\n        }\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BACKEND_URL}}/api/v1/app/response/skill/1",
-									"host": [
-										"{{BACKEND_URL}}"
-									],
-									"path": [
-										"api",
-										"v1",
-										"app",
-										"response",
-										"skill",
-										"1"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Date",
-									"value": "Sat, 11 May 2024 22:13:21 GMT"
-								},
-								{
-									"key": "Server",
-									"value": "WSGIServer/0.2 CPython/3.12.2"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Vary",
-									"value": "Accept, origin"
-								},
-								{
-									"key": "Allow",
-									"value": "OPTIONS, POST"
-								},
-								{
-									"key": "X-Frame-Options",
-									"value": "DENY"
-								},
-								{
-									"key": "Content-Length",
-									"value": "1681"
-								},
-								{
-									"key": "X-Content-Type-Options",
-									"value": "nosniff"
-								},
-								{
-									"key": "Referrer-Policy",
-									"value": "same-origin"
-								},
-								{
-									"key": "Cross-Origin-Opener-Policy",
-									"value": "same-origin"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"id\": 2,\n    \"answer\": {\n        \"Jobs to be done\": \"ans 1\",\n        \"Describe your Persona\": \"ans2\",\n        \"Also Consider (Optional)\": \"eg. Users aren’t adopting our product\"\n    },\n    \"result\": {\n        \"prd_title\": \"Smart Home Energy Management System\",\n        \"prd_category\": \"Smart Home Automation\",\n        \"prd_tags\": \"energy efficiency, IoT, home automation\",\n        \"prd_content\": {\n            \"problem_statement\": \"Households want to reduce energy consumption and lower electricity bills.\",\n            \"objective\": \"To develop a smart home energy management system that empowers users to monitor and control their energy usage efficiently.\",\n            \"persona\": \"Sarah, a working mother who is environmentally conscious and wants to reduce her household's carbon footprint while efficiently managing energy costs.\",\n            \"risks_assumptions\": \"Potential challenges may include user adoption hurdles due to complexity or lack of perceived value in the features.\",\n            \"high_level_solution\": \"Provide a user-friendly mobile app and integrated smart devices that offer real-time insights and automated control of energy usage.\",\n            \"features_list\": [\n                {\n                    \"feature_name\": \"Real-time Energy Monitoring\",\n                    \"feature_detail_points\": [\n                        \"Track energy consumption by individual devices\",\n                        \"Receive alerts for unusual usage patterns\"\n                    ]\n                },\n                {\n                    \"feature_name\": \"Smart Device Control\",\n                    \"feature_detail_points\": [\n                        \"Remotely turn devices on/off for energy optimization\",\n                        \"Set schedules for efficient operation\"\n                    ]\n                },\n                {\n                    \"feature_name\": \"Energy Usage Recommendations\",\n                    \"feature_detail_points\": [\n                        \"Receive personalized tips to reduce energy wastage\",\n                        \"Optimize energy consumption based on lifestyle patterns\"\n                    ]\n                }\n            ],\n            \"success_metrics\": \"Increase in user engagement through daily app usage, decrease in energy bills for users, high customer satisfaction scores.\"\n        }\n    }\n}"
-						}
-					]
-				},
-				{
-					"name": "section",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Response status code is 200\", function () {",
-									"  pm.expect(pm.response.code).to.equal(200);",
-									"});",
-									"",
-									"pm.test(\"Content-Type is application/json\", function () {",
-									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
-									"});",
-									"",
-									"pm.test(\"Each object in the response array has all the required fields and correct data types\", function () {",
-									"    const responseData = pm.response.json();",
-									"    ",
-									"    pm.expect(responseData).to.be.an('array');",
-									"    ",
-									"    responseData.forEach(function(item) {",
-									"        pm.expect(item).to.be.an('object');",
-									"        pm.expect(item.id).to.exist.and.to.be.a('number').and.to.be.at.least(0);",
-									"        pm.expect(item.module_name).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Module name should not be empty\").and.to.match(/^[a-zA-Z0-9]+$/, \"Module name should be a non-empty string with only alphanumeric characters\");",
-									"        pm.expect(item.description).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Description should not be empty\").and.to.have.lengthOf.at.most(255, \"Description should not exceed 255 characters\");",
-									"    });",
-									"});",
-									"",
-									"pm.test(\"Response time is less than 200ms\", function () {",
-									"  pm.expect(pm.response.responseTime).to.be.below(200);",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
-									"console.log(backend_url);\r",
-									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
-									"    var json_data = response.json()\r",
-									"    console.log(json_data);\r",
-									"\r",
-									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "bearer {{TOKEN}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://127.0.0.1:8000/api/v1/app/3/section/topics",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "8000",
-							"path": [
-								"api",
-								"v1",
-								"app",
-								"3",
-								"section",
-								"topics"
-							]
-						},
-						"description": "This endpoint sends an HTTP GET request to retrieve information about the app with ID 1. The response will be in JSON format and will include the ID, module name, and description of the app. along ith complition and result. complition will tell how much is complited and result will be given for whole module if the molule is completed.\n\nThe response will have a status code of 200 indicating a successful request."
-					},
-					"response": []
-				},
-				{
-					"name": "lession",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Response status code is 200\", function () {",
-									"  pm.expect(pm.response.code).to.equal(200);",
-									"});",
-									"",
-									"pm.test(\"Content-Type is application/json\", function () {",
-									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
-									"});",
-									"",
-									"pm.test(\"Each object in the response array has all the required fields and correct data types\", function () {",
-									"    const responseData = pm.response.json();",
-									"    ",
-									"    pm.expect(responseData).to.be.an('array');",
-									"    ",
-									"    responseData.forEach(function(item) {",
-									"        pm.expect(item).to.be.an('object');",
-									"        pm.expect(item.id).to.exist.and.to.be.a('number').and.to.be.at.least(0);",
-									"        pm.expect(item.module_name).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Module name should not be empty\").and.to.match(/^[a-zA-Z0-9]+$/, \"Module name should be a non-empty string with only alphanumeric characters\");",
-									"        pm.expect(item.description).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Description should not be empty\").and.to.have.lengthOf.at.most(255, \"Description should not exceed 255 characters\");",
-									"    });",
-									"});",
-									"",
-									"pm.test(\"Response time is less than 200ms\", function () {",
-									"  pm.expect(pm.response.responseTime).to.be.below(200);",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"const backend_url = pm.globals.get(\"BACKEND_URL\");\r",
-									"console.log(backend_url);\r",
-									"pm.sendRequest(backend_url+\"/api/v1/auth/refresh\", function (err, response) {\r",
-									"    var json_data = response.json()\r",
-									"    console.log(json_data);\r",
-									"\r",
-									"    pm.globals.set(\"TOKEN\", json_data.token);\r",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "bearer {{TOKEN}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{BACKEND_URL}}/api/v1/app/3/section/topics/1/lessions",
-							"host": [
-								"{{BACKEND_URL}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"app",
-								"3",
-								"section",
-								"topics",
-								"1",
-								"lessions"
-							]
-						},
-						"description": "This endpoint sends an HTTP GET request to retrieve information about the app with ID 1. The response will be in JSON format and will include the ID, module name, and description of the app. along ith complition and result. complition will tell how much is complited and result will be given for whole module if the molule is completed.\n\nThe response will have a status code of 200 indicating a successful request."
-					},
-					"response": []
-				},
-				{
-					"name": "search module challenges label",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{BACKEND_URL}}/api/v1/app/search/Product?search_lebel=module&depth=3",
-							"host": [
-								"{{BACKEND_URL}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"app",
-								"search",
-								"Product"
-							],
-							"query": [
-								{
-									"key": "search_lebel",
-									"value": "module"
-								},
-								{
-									"key": "depth",
-									"value": "3"
-								}
-							]
-						},
-						"description": "search_lebel can be \\[module, categorie, section\\]  \ndepth will define how much depth you want to go inside each app\n\nlike for example value of (search_lebel and depth) is (module and 2) then the result will be on basic of module and challenge only. And if depth is 3 then search eise be on basic of module, challenge and lebel.\n\nif no search_lebel is provided then the search on whole app is performed\n\n[{{BACKEND_URL}}/api/v1/app/search/<searchparameter< a=\"\">&gt;[?search_lebel=module&amp;depth=3]</searchparameter<>]({{BACKEND_URL}}/api/v1/app/search/<search)\n\n[different examples are given.]({{BACKEND_URL}}/api/v1/app/search/<search)"
 					},
 					"response": []
 				}

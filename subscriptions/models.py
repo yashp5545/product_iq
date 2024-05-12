@@ -98,7 +98,7 @@ class SubscriptionTrack(models.Model):
     payment_failed_time = models.DateTimeField(default=None, null=True)
 
     payment_status = models.CharField(max_length=20, choices=[(
-        status.value, status.value) for status in SubscriptionTrackStatus], default=SubscriptionTrackStatus.INITIATED)
+        status.value, status.value) for status in SubscriptionTrackStatus], default=SubscriptionTrackStatus.INITIATED.value)
 
     def handle_success(self):
         self.payment_conformation_time = timezone.now()
