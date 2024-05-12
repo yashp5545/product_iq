@@ -1240,7 +1240,90 @@
 						},
 						"description": "This endpoint sends an HTTP GET request to retrieve information about the app with ID 1. The response will be in JSON format and will include the ID, module name, and description of the app. along ith complition and result. complition will tell how much is complited and result will be given for whole module if the molule is completed.\n\nThe response will have a status code of 200 indicating a successful request."
 					},
-					"response": []
+					"response": [
+						{
+							"name": "skills",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BACKEND_URL}}/api/v1/app/2/categorie/1",
+									"host": [
+										"{{BACKEND_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"app",
+										"2",
+										"categorie",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Sat, 11 May 2024 22:09:12 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.12.2"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, origin"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "467"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"name\": \"worktool skill 1\",\n        \"description\": \"sdf\",\n        \"active\": true,\n        \"tags\": [\n            \"3\",\n            \"5\",\n            \"hhhh\"\n        ],\n        \"question_suggestion\": [\n            {\n                \"id\": 1,\n                \"field_name\": \"Describe your Persona\",\n                \"placeholder\": \"eg. Users aren’t adopting our product\",\n                \"type\": \"text\"\n            },\n            {\n                \"id\": 2,\n                \"field_name\": \"Jobs to be done\",\n                \"placeholder\": \"eg. Users aren’t adopting our product\",\n                \"type\": \"text\"\n            },\n            {\n                \"id\": 3,\n                \"field_name\": \"Also Consider (Optional)\",\n                \"placeholder\": \"eg. Users aren’t adopting our product\",\n                \"type\": \"textarea\"\n            }\n        ]\n    }\n]"
+						}
+					]
 				},
 				{
 					"name": "skill responce",
@@ -1344,13 +1427,12 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "bearer {{TOKEN}}",
-								"type": "text"
+								"value": "bearer {{TOKEN}}"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"answer\": {\r\n            \"Jobs to be done\": \"ans 1\",\r\n            \"Describe your Persona\": \"ans2\"\r\n        }\r\n}",
+							"raw": "{\r\n    \"answer\": {\r\n            \"Jobs to be done\": \"ans 1\",\r\n            \"Describe your Persona\": \"ans2\",\r\n\t\t\t\"Also Consider (Optional)\": \"eg. Users aren’t adopting our product\"\r\n        }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1373,7 +1455,90 @@
 						},
 						"description": "\nThis API endpoint is a POST request to {{BACKEND_URL}}/api/v1/app/response/lebel/1. It is used to submit an answer for evaluation.\n\n### Request Body\n- The request body should be in raw format and include a JSON object with the \"answer\" key.\n\n### Response\nUpon successful execution, the API returns a status code of 200 and a JSON object with the following structure:\n```json\n{\n    \"now\": {\n        \"answer\": \"\",\n        \"result\": {},\n        \"evalution_result\": 0\n    },\n    \"previous\": {\n        \"answer\": \"\",\n        \"result\": {},\n        \"evalution_result\": 0\n    }\n}\n```\nThe \"now\" and \"previous\" objects contain the submitted answer, evaluation result, and additional information.\n\n"
 					},
-					"response": []
+					"response": [
+						{
+							"name": "skill responce",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"answer\": {\r\n            \"Jobs to be done\": \"ans 1\",\r\n            \"Describe your Persona\": \"ans2\",\r\n\t\t\t\"Also Consider (Optional)\": \"eg. Users aren’t adopting our product\"\r\n        }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BACKEND_URL}}/api/v1/app/response/skill/1",
+									"host": [
+										"{{BACKEND_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"app",
+										"response",
+										"skill",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Sat, 11 May 2024 22:13:21 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.12.2"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, origin"
+								},
+								{
+									"key": "Allow",
+									"value": "OPTIONS, POST"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1681"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 2,\n    \"answer\": {\n        \"Jobs to be done\": \"ans 1\",\n        \"Describe your Persona\": \"ans2\",\n        \"Also Consider (Optional)\": \"eg. Users aren’t adopting our product\"\n    },\n    \"result\": {\n        \"prd_title\": \"Smart Home Energy Management System\",\n        \"prd_category\": \"Smart Home Automation\",\n        \"prd_tags\": \"energy efficiency, IoT, home automation\",\n        \"prd_content\": {\n            \"problem_statement\": \"Households want to reduce energy consumption and lower electricity bills.\",\n            \"objective\": \"To develop a smart home energy management system that empowers users to monitor and control their energy usage efficiently.\",\n            \"persona\": \"Sarah, a working mother who is environmentally conscious and wants to reduce her household's carbon footprint while efficiently managing energy costs.\",\n            \"risks_assumptions\": \"Potential challenges may include user adoption hurdles due to complexity or lack of perceived value in the features.\",\n            \"high_level_solution\": \"Provide a user-friendly mobile app and integrated smart devices that offer real-time insights and automated control of energy usage.\",\n            \"features_list\": [\n                {\n                    \"feature_name\": \"Real-time Energy Monitoring\",\n                    \"feature_detail_points\": [\n                        \"Track energy consumption by individual devices\",\n                        \"Receive alerts for unusual usage patterns\"\n                    ]\n                },\n                {\n                    \"feature_name\": \"Smart Device Control\",\n                    \"feature_detail_points\": [\n                        \"Remotely turn devices on/off for energy optimization\",\n                        \"Set schedules for efficient operation\"\n                    ]\n                },\n                {\n                    \"feature_name\": \"Energy Usage Recommendations\",\n                    \"feature_detail_points\": [\n                        \"Receive personalized tips to reduce energy wastage\",\n                        \"Optimize energy consumption based on lifestyle patterns\"\n                    ]\n                }\n            ],\n            \"success_metrics\": \"Increase in user engagement through daily app usage, decrease in energy bills for users, high customer satisfaction scores.\"\n        }\n    }\n}"
+						}
+					]
 				},
 				{
 					"name": "section",
@@ -1918,13 +2083,11 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "bearer {{TOKEN}}",
-								"type": "text"
+								"value": "bearer {{TOKEN}}"
 							},
 							{
 								"key": "",
 								"value": "",
-								"type": "text",
 								"disabled": true
 							}
 						],
@@ -1942,6 +2105,35 @@
 								"1",
 								"duration",
 								"Monthly"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "webhook",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/subscription/webhook",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"subscription",
+								"webhook"
 							]
 						}
 					},
