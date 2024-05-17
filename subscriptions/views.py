@@ -66,6 +66,7 @@ def create_payment_intent(request, user, plan_id, duration):
 
     if (duration not in [plan_duration.value for plan_duration in PlanType]):
         return Response({'error': "Duration must be "+"/".join([plan_duration.value for plan_duration in PlanType])}, status=404)
+
     
     user = User.objects.get(id=user['id'])
     plan_price = plan.annual_price if duration == PlanType.ANNUAL else plan.monthly_price
@@ -79,64 +80,60 @@ def create_payment_intent(request, user, plan_id, duration):
     )
 
     customer = stripe.Customer.create()
-    ephemeral_key = stripe.EphemeralKey.create(customer = customer.id, stripe_version= "2023-10-16")
+    # ephemeral_key = stripe.EphemeralKey.create(customer = customer.id, stripe_version= "2023-10-16")
     
-    payment_intent = stripe.PaymentIntent.create(
-        amount=int(plan_price*100), 
-        currency='inr',
-        customer=customer.id,
-        description="ProductIQ payment service",
-        metadata={
-            "user_id": user.id,
-            "plan_id": plan.id,
-            "ephemeral_key": ephemeral_key,
-            "customer_id": customer.id,
-            "subscription_track_id": subscription_track.id, 
-            "amount": plan_price
-        }
-    )
-
-    
-
-    return Response({
-        "payment_intent": payment_intent,
-        "ephemeral_key": ephemeral_key,
-        "customer": customer.id,
-        "publishable_key": settings.STRIPE_PUBLISHABLE_KEY
-    })
-    # checkout_session = stripe.checkout.Session.create(
-    #     payment_method_types=['card'],
-    #     line_items=[{
-    #         'price_data': {
-    #             'currency': 'inr',
-    #             'product_data': {
-    #                 'name': plan.name,
-    #                 'description': plan.description,
-
-    #             },
-    #             'unit_amount': int(plan_price*100),
-    #         },
-    #         'quantity': 1,
-    #     }],
+    # payment_intent = stripe.PaymentIntent.create(
+    #     amount=int(plan_price*100), 
+    #     currency='inr',
+    #     customer=customer.id,
+    #     description="ProductIQ payment service",
     #     metadata={
-    #         'user_id': user['id'],
-    #         'plan_id': plan_id,
-    #     },
-    #     mode='payment',
-    #     success_url=settings.PAYMENT_SUCCESS_URL,
-    #     cancel_url=settings.PAYMENT_CANCEL_URL,
+    #         "user_id": user.id,
+    #         "plan_id": plan.id,
+    #         "ephemeral_key": ephemeral_key,
+    #         "customer_id": customer.id,
+    #         "subscription_track_id": subscription_track.id, 
+    #         "amount": plan_price
+    #     }
     # )
-    # print("hello")
-    # print(checkout_session)
-    # print("bye")
 
-    # # return Response("success");
+    
 
     # return Response({
-    #     'id': checkout_session.id,
-    #     'payment_intent': checkout_session.payment_intent,
-    #     'client_secret': checkout_session.client_secret,
+    #     "payment_intent": payment_intent,
+    #     "ephemeral_key": ephemeral_key,
+    #     "customer": customer.id,
+    #     "publishable_key": settings.STRIPE_PUBLISHABLE_KEY
     # })
+    checkout_session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=[{
+            'price_data': {
+                'currency': 'inr',
+                'product_data': {
+                    'name': plan.name,
+                    'description': plan.description,
+
+                },
+                'unit_amount': int(plan_price*100),
+            },
+            'quantity': 1,
+        }],
+        metadata={
+            'user_id': user.id,
+            'plan_id': plan_id,
+        },
+        mode='payment',
+        success_url=settings.PAYMENT_SUCCESS_URL,
+        cancel_url=settings.PAYMENT_CANCEL_URL,
+    )
+    print("hello")
+    print(checkout_session)
+    print("bye")
+
+    # return Response("success");
+
+    return Response(checkout_session)
 
     
 
