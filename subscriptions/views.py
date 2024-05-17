@@ -58,7 +58,7 @@ def get_all_plans(request, user):
 @ isAuth
 def create_payment_intent(request, user, plan_id, duration):
     plan = Plan.objects.filter(id=plan_id).first()
-    
+
     print(plan)
 
     if not plan:
@@ -67,23 +67,21 @@ def create_payment_intent(request, user, plan_id, duration):
     if (duration not in [plan_duration.value for plan_duration in PlanType]):
         return Response({'error': "Duration must be "+"/".join([plan_duration.value for plan_duration in PlanType])}, status=404)
 
-    
     user = User.objects.get(id=user['id'])
     plan_price = plan.annual_price if duration == PlanType.ANNUAL else plan.monthly_price
 
-
     subscription_track = SubscriptionTrack.objects.create(
-        user = user,
-        plan = plan,
-        amount = plan_price,
-        duration = duration,
+        user=user,
+        plan=plan,
+        amount=plan_price,
+        duration=duration,
     )
 
     customer = stripe.Customer.create()
     # ephemeral_key = stripe.EphemeralKey.create(customer = customer.id, stripe_version= "2023-10-16")
-    
+
     # payment_intent = stripe.PaymentIntent.create(
-    #     amount=int(plan_price*100), 
+    #     amount=int(plan_price*100),
     #     currency='inr',
     #     customer=customer.id,
     #     description="ProductIQ payment service",
@@ -92,12 +90,10 @@ def create_payment_intent(request, user, plan_id, duration):
     #         "plan_id": plan.id,
     #         "ephemeral_key": ephemeral_key,
     #         "customer_id": customer.id,
-    #         "subscription_track_id": subscription_track.id, 
+    #         "subscription_track_id": subscription_track.id,
     #         "amount": plan_price
     #     }
     # )
-
-    
 
     # return Response({
     #     "payment_intent": payment_intent,
@@ -134,8 +130,6 @@ def create_payment_intent(request, user, plan_id, duration):
     # return Response("success");
 
     return Response(checkout_session)
-
-    
 
 
 # webhook implementation
@@ -177,7 +171,7 @@ def get_my_subscriptions(request, user):
     return Response([{
         'plan': subscription.plan.name,
         'start_date': subscription.start_date,
-        'is_valid': subscription.end_date  >= timezone.now().date(),
+        'is_valid': subscription.end_date >= timezone.now().date(),
         'duration': subscription.duration,
         'amount_paid': subscription.amount,
         'actual_amount': subscription.plan.annual_price if subscription.duration == PlanType.ANNUAL else subscription.plan.monthly_price,
@@ -189,3 +183,18 @@ def get_my_subscriptions(request, user):
             } for app in subscription.plan.apps.all()
         ]
     } for subscription in subscriptions])
+
+
+@api_view(["GET"])
+def success(request):
+    return Response({
+        "message": "success",
+    }, status=201)
+
+
+@api_view(["GET"])
+def failed(request):
+    return Response({
+        "message": "failed",
+    }, status=401)
+

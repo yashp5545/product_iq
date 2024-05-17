@@ -4,7 +4,7 @@
 		"name": "productiq",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "25553200",
-		"_collection_link": "https://www.postman.com/se-project-iiita/workspace/205b6fb4-a26c-467a-9c98-984db9ccb6aa/collection/25553200-71738981-55f0-4f16-89ca-96f2f66033ae?action=share&source=collection_link&creator=25553200"
+		"_collection_link": "https://www.postman.com/se-project-iiita/workspace/product-iq/collection/25553200-71738981-55f0-4f16-89ca-96f2f66033ae?action=share&source=collection_link&creator=25553200"
 	},
 	"item": [
 		{
@@ -90,7 +90,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"swaroopdora\",\r\n    \"email\": \"s@ss.ss\",\r\n    \"password\": \"1946\",\r\n    \"product_exp\":\"Beginner\",\r\n    \"name\": \"Swroop Dora\"\r\n}",
+							"raw": "{\r\n    \"username\": \"swaroopdoras\",\r\n    \"email\": \"ss@ss.ss\",\r\n    \"password\": \"1946\",\r\n    \"product_exp\":\"Beginner\",\r\n    \"name\": \"Swroop Dora\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2149,6 +2149,46 @@
 								"v1",
 								"subscription",
 								"webhook"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "success",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/subscription/success",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"subscription",
+								"success"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "failed",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BACKEND_URL}}/api/v1/subscription/success",
+							"host": [
+								"{{BACKEND_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"subscription",
+								"success"
 							]
 						}
 					},
