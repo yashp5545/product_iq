@@ -102,12 +102,13 @@ class SubscriptionTrack(models.Model):
 
     def handle_success(self):
         self.payment_conformation_time = timezone.now()
-        self.payment_status = SubscriptionTrackStatus.SUCCESS
+        self.payment_status = SubscriptionTrackStatus.SUCCESS.value
         self.save()
+        print("handle success: ", self)
 
     def handle_failure(self):
         self.payment_failed_time = timezone.now()
-        self.payment_status = SubscriptionTrackStatus.FAILURE
+        self.payment_status = SubscriptionTrackStatus.FAILURE.value
         self.save()
 
 
@@ -135,6 +136,7 @@ class SubscriptionPayment(models.Model):
         )
 
         subscription_payment.save()
+        print("subscription_payment: ", subscription_payment)
         return subscription_payment
 
 

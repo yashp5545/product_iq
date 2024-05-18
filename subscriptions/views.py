@@ -124,8 +124,10 @@ def create_payment_intent(request, user, plan_id, duration):
             'quantity': 1,
         }],
         metadata={
-            'user_id': user.id,
-            'plan_id': plan_id,
+            "user_id": user.id,
+            "plan_id": plan.id,
+            "subscription_track_id": subscription_track.id,
+            "amount": plan_price
         },
         mode='payment',
         success_url=settings.PAYMENT_SUCCESS_URL,
@@ -161,12 +163,15 @@ def stripe_webhook(request):
 
     # Handle the event
     print(event)
-    if event['type'] == 'payment_intent.succeeded':
-        print(event)
+    # if event['type'] == 'payment_intent.succeeded':
+    #     print("payment_intent.succeeded: ", event)
+    #     session = event['data']['object']
+    #     handle_checkout_session(session)
+    if event['type'] == 'checkout.session.completed':
+        print(event, "checkout.session.completed")
         session = event['data']['object']
-
-        # Fulfill the purchase...
-        # handle_checkout_session(session)
+        handle_checkout_session(session)
+    if event['type'] == ''
 
     return Response({'status': 'success'}, status=200)
 
