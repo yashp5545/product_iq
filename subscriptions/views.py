@@ -57,6 +57,10 @@ def get_all_plans(request, user):
 @ api_view(['POST'])
 @ isAuth
 def create_payment_intent(request, user, plan_id, duration):
+    if not request.data['address']:
+        Response({
+            "error": "Please provide address!"
+        })
     plan = Plan.objects.filter(id=plan_id).first()
 
     print(plan)
@@ -77,7 +81,11 @@ def create_payment_intent(request, user, plan_id, duration):
         duration=duration,
     )
 
-    customer = stripe.Customer.create()
+    customer = stripe.Customer.create(
+        name=user.name,
+        email=user.email,
+        address=request.data['address']
+    )
     # ephemeral_key = stripe.EphemeralKey.create(customer = customer.id, stripe_version= "2023-10-16")
 
     # payment_intent = stripe.PaymentIntent.create(
@@ -103,15 +111,15 @@ def create_payment_intent(request, user, plan_id, duration):
     # })
     checkout_session = stripe.checkout.Session.create(
         payment_method_types=['card'],
+        customer=customer['id'],
         line_items=[{
             'price_data': {
                 'currency': 'inr',
                 'product_data': {
                     'name': plan.name,
                     'description': plan.description,
-
                 },
-                'unit_amount': int(plan_price*100),
+                'unit_amount': int(plan_price * 100),
             },
             'quantity': 1,
         }],
@@ -197,4 +205,3 @@ def failed(request):
     return Response({
         "message": "failed",
     }, status=401)
-
