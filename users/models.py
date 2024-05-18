@@ -85,3 +85,10 @@ class User(AbstractUser, PermissionsMixin):
 
     def __str__(self):
         return f"{self.username} - {self.email} - {self.product_exp}"
+
+    def reduce_number_of_discount(self, num: int):
+        if(self.number_of_discounts - num > 0):
+            self.number_of_discounts -= num
+        else:
+            self.number_of_discounts = 0
+        self.save()

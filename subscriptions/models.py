@@ -123,11 +123,13 @@ class SubscriptionPayment(models.Model):
 
     start_date = models.DateField(default=timezone.now)
 
+    extra_days = models.IntegerField(default=0)
+
     def __str__(self):
         return f"{self.user.username} - Payment for {self.plan.name}"
 
     @classmethod
-    def on_successful_payment(cls, subscription_track: "SubscriptionTrack") -> bool:
+    def on_successful_payment(cls, subscription_track: SubscriptionTrack) -> bool:
         subscription_payment = cls(
             user=subscription_track.user,
             plan=subscription_track.plan,

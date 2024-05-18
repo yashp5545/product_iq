@@ -8,6 +8,7 @@ from .models import App, Module, Challenge, Level, LevelResponses, Categories, S
 from .helper import get_final_result_of_module
 from users.models import User
 from users.isAuth import isAuth
+from users.isSubscribed import isSubscribed
 from users.referal import check_and_reward_referer
 
 from rest_framework.decorators import api_view
@@ -29,6 +30,7 @@ def get_all(request):
 
 @api_view(['GET'])
 @isAuth
+@isSubscribed
 def get_modules(request, user, app_id):
     modules = Module.objects.filter(app_id=app_id)
 
@@ -68,6 +70,7 @@ def get_modules(request, user, app_id):
 
 @api_view(['GET'])
 @isAuth
+@isSubscribed
 def get_challenges_labels(request, user, app_id, module_id):
     # if completed show completed and how many star rating
     challenge = Challenge.objects.filter(module_id=module_id)
@@ -105,7 +108,8 @@ def get_challenges_labels(request, user, app_id, module_id):
 
 @api_view(['POST'])
 @isAuth
-def get_responce(request, user, lebel_id):
+@isSubscribed
+def get_responce(request, user, app_id, lebel_id):
     # use gpt to give responce like rating in different skills
     lebel = Level.objects.get(id=lebel_id)
     user = User.objects.get(id=user['id'])
@@ -286,6 +290,7 @@ def search(request, search):
 
 
 @api_view(['GET'])
+@isSubscribed
 def get_categories(request, app_id):
     categories = Categories.objects.filter(app_id=app_id)
     if (not categories):
@@ -301,6 +306,7 @@ def get_categories(request, app_id):
 
 
 @api_view(['GET'])
+@isSubscribed
 def get_skills(request, app_id, categorie_id):
     skills = Skill.objects.filter(category_id=categorie_id)
     if (not skills):
@@ -326,7 +332,8 @@ def get_skills(request, app_id, categorie_id):
 
 @api_view(['POST'])
 @isAuth
-def get_skill_responce(request, user, skill_id):
+@isSubscribed
+def get_skill_responce(request, user, app_id, skill_id):
     answer = request.data['answer'];                          # assuming answer is of type json and now a dict
     skill = Skill.objects.filter(id=skill_id).first()
     if (not skill):
@@ -358,6 +365,7 @@ def get_skill_responce(request, user, skill_id):
 
 
 @api_view(['GET'])
+@isSubscribed
 def get_sections_topics(request, app_id):
     sections = Section.objects.filter(app_id=app_id)
     if (not sections):
@@ -379,6 +387,7 @@ def get_sections_topics(request, app_id):
 
 
 @api_view(['GET'])
+@isSubscribed
 def get_lessions(request, app_id, topic_id):
     lessions = Lession.objects.filter(topic_id=topic_id)
     if (not lessions):

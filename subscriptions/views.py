@@ -8,7 +8,7 @@ from django.utils import timezone
 
 from .models import Plan, SubscriptionPayment, Coupon, PlanType, SubscriptionTrack
 from users.isAuth import isAuth
-from .helper import handle_checkout_session, get_end_date
+from .helper import handle_checkout_session, get_end_date, get_number_of_discount, get_discounted_price, get_coupon_discount
 from users.models import User
 
 
@@ -21,31 +21,21 @@ FACTOR = 0.1
 @isAuth
 def get_all_plans(request, user):
     coupon = request.query_params.get('coupon', None)
-    coupon_discount = 0
-    if coupon:
-        coupon = Coupon.objects.filter(code=coupon).first()
-        if not coupon:
-            return Response({'error': 'Invalid Coupon'}, status=404)
-        coupon_discount = float(coupon.discount_in_decimal)
+    coupon_discount = get_coupon_discount(coupon)
+    if coupon_discount == -1:
+        return Response({'error': 'Invalid Coupon'}, status=404)
+
     plans = Plan.objects.all()
     user = User.objects.get(id=user['id'])
-    number_of_discount = user.number_of_discounts
-    if (number_of_discount > 10):
-        number_of_discount = (10)
+    number_of_discount = get_number_of_discount(user)
 
     return Response([{
         'id': plan.id,
         'name': plan.name,
         'price_monthly': float(plan.monthly_price),
-        'discounted_monthly': max(float(plan.monthly_price)
-                                  - (float(plan.monthly_price) *
-                                     (number_of_discount * FACTOR))
-                                  - (float(plan.monthly_price) * coupon_discount), 0),
+        'discounted_monthly': get_discounted_price(plan, PlanType.MONTHLY, number_of_discount, coupon_discount),
         'price_annual': float(plan.annual_price),
-        'discoutned_annual': max(float(plan.annual_price)
-                                 - (float(plan.annual_price)
-                                    * number_of_discount * FACTOR)
-                                 - (float(plan.annual_price) * coupon_discount), 0),
+        'discounted_annual': get_discounted_price(plan, PlanType.ANNUAL, number_of_discount, coupon_discount),
         'description': plan.description,
         'recommended': plan.recommended,
         'apps': [app.app_name for app in plan.apps.all()]
@@ -57,10 +47,16 @@ def get_all_plans(request, user):
 @ api_view(['POST'])
 @ isAuth
 def create_payment_intent(request, user, plan_id, duration):
+    coupon = request.query_params.get('coupon', None)
+    coupon_discount = get_coupon_discount(coupon)
+    if coupon_discount == -1:
+        return Response({'error': 'Invalid Coupon'}, status=404)
+
     if not request.data['address']:
         Response({
             "error": "Please provide address!"
-        })
+        }, status=404)
+
     plan = Plan.objects.filter(id=plan_id).first()
 
     print(plan)
@@ -72,6 +68,7 @@ def create_payment_intent(request, user, plan_id, duration):
         return Response({'error': "Duration must be "+"/".join([plan_duration.value for plan_duration in PlanType])}, status=404)
 
     user = User.objects.get(id=user['id'])
+    number_of_discount = get_number_of_discount(user)
     plan_price = plan.annual_price if duration == PlanType.ANNUAL else plan.monthly_price
 
     subscription_track = SubscriptionTrack.objects.create(
@@ -127,7 +124,8 @@ def create_payment_intent(request, user, plan_id, duration):
             "user_id": user.id,
             "plan_id": plan.id,
             "subscription_track_id": subscription_track.id,
-            "amount": plan_price
+            "amount": plan_price, 
+            "number_of_discount_to_reduce": number_of_discount,
         },
         mode='payment',
         success_url=settings.PAYMENT_SUCCESS_URL,
@@ -171,7 +169,7 @@ def stripe_webhook(request):
         print(event, "checkout.session.completed")
         session = event['data']['object']
         handle_checkout_session(session)
-    if event['type'] == ''
+    # if event['type'] == ''
 
     return Response({'status': 'success'}, status=200)
 
