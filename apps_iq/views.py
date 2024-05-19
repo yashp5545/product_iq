@@ -380,7 +380,8 @@ def get_skill_responce(request, user, app_id, skill_id):
 
 
 @api_view(['GET'])
-def get_sections_topics(request, app_id):
+@isAuth
+def get_sections_topics(request, user, app_id):
     sections = Section.objects.filter(app_id=app_id)
     if (not sections):
         return Response({
@@ -392,6 +393,7 @@ def get_sections_topics(request, app_id):
         'active': section.active,
         'topic': [
             {
+                'is_allowed': is_allowed(Topic, topic.id, app_id, user['id']),
                 'id': topic.id,
                 'name': topic.name,
                 'active': topic.active,
@@ -401,12 +403,17 @@ def get_sections_topics(request, app_id):
 
 
 @api_view(['GET'])
-def get_lessions(request, app_id, topic_id):
+@isAuth
+def get_lessions(request, user, app_id, topic_id):
     lessions = Lession.objects.filter(topic_id=topic_id)
+    
     if (not lessions):
         return Response({
             'message': 'No lessions found'
         }, status=404)
+    if not is_allowed(Topic, lessions.first().topic.id, app_id, user['id']):
+        app = App.objects.get(id = app_id)
+        return Response({"error": f"You are not subscribed to {app.app_name}!"}, status=403)
     return Response([{
         'id': lession.id,
         'name': lession.name,
