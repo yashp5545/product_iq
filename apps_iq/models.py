@@ -104,6 +104,7 @@ class Skill(models.Model):
     category = models.ForeignKey(Categories, on_delete=models.CASCADE)
     tags = ArrayField(models.CharField(max_length=200),
                       blank=True, default=list)
+    subscription_required = models.BooleanField(default=True)
 
     # question_suggestion = models.JSONField()
 
@@ -159,6 +160,7 @@ class Topic(models.Model):
     name = models.CharField(max_length=LEN_MAX)
     active = models.BooleanField(default=True)
     section = models.ForeignKey(Section, on_delete=models.CASCADE)
+    subscription_required = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name

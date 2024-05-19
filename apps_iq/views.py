@@ -316,7 +316,8 @@ def get_categories(request, app_id):
 
 
 @api_view(['GET'])
-def get_skills(request, app_id, categorie_id):
+@isAuth
+def get_skills(request, user, app_id, categorie_id):
     skills = Skill.objects.filter(category_id=categorie_id)
     if (not skills):
         return Response({
@@ -328,6 +329,7 @@ def get_skills(request, app_id, categorie_id):
         'description': skill.description,
         'active': skill.active,
         'tags': skill.tags,
+        'is_allowed': is_allowed(Skill, skill.id, app_id, user['id']),
         'question_suggestion': [
             {
                 'id': question.id,
@@ -335,7 +337,7 @@ def get_skills(request, app_id, categorie_id):
                 'placeholder': question.placeholder,
                 'type': question.type,
             } for question in Question.objects.filter(skill_id=skill.id)
-        ],
+        ] if is_allowed(Skill, skill.id, app_id, user['id']) else None,
     } for skill in skills])
 
 
@@ -345,10 +347,14 @@ def get_skill_responce(request, user, app_id, skill_id):
     # assuming answer is of type json and now a dict
     answer = request.data['answer']
     skill = Skill.objects.filter(id=skill_id).first()
+
     if (not skill):
         return Response({
             'message': 'No skill found'
         }, status=404)
+    if not is_allowed(Skill, skill.id, app_id, user['id']):
+        app = App.objects.get(id = app_id)
+        return Response({"error": f"You are not subscribed to {app.app_name}!"}, status=403)
     user = User.objects.get(id=user['id'])
 
     result = None
