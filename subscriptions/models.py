@@ -141,6 +141,19 @@ class SubscriptionPayment(models.Model):
         print("subscription_payment: ", subscription_payment)
         return subscription_payment
 
+    @property
+    def end_date(self):
+        duration = self.duration
+        start_date = self.start_date
+        extra_days = self.extra_days
+        if (duration == PlanType.MONTHLY.value):
+            print(start_date)
+            return start_date + timezone.timedelta(days=30+extra_days)
+        elif duration == PlanType.ANNUAL.value:
+            return start_date + timezone.timedelta(days=365+extra_days)
+        else:
+            raise "In get_end_date function there is a error of duration"
+
 
 class DiscountType(Enum):
     PERCENTAGE = 'percentage'

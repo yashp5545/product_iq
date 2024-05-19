@@ -32,6 +32,7 @@ def get_end_date(start_date, duration: PlanType, extra_days = 0):
     else:
         raise "In get_end_date function there is a error of duration"
 
+
 def get_number_of_discount(user: User):
     number_of_discount = user.number_of_discounts
     if (number_of_discount > 10):
