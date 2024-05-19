@@ -8,7 +8,7 @@ from .models import App, Module, Challenge, Level, LevelResponses, Categories, S
 from .helper import get_final_result_of_module
 from users.models import User
 from users.isAuth import isAuth
-from users.isSubscribed import isSubscribed
+from users.isSubscribed import isSubscribed, is_subscribed_to_app, is_allowed
 from users.referal import check_and_reward_referer
 
 from rest_framework.decorators import api_view
@@ -18,19 +18,21 @@ from gpt.helper import get_response, get_response_worktools
 
 MIN_LEN = 72
 
+
 @api_view(['GET'])
-def get_all(request):
+@isAuth
+def get_all(request, user):
     apps = App.objects.all()
     return Response([{
         'id': app.id,
         'app_name': app.app_name,
         'description': app.description,
+        'is_subscribed': is_subscribed_to_app(app.id, user['id']),
     } for app in apps])
 
 
 @api_view(['GET'])
 @isAuth
-@isSubscribed
 def get_modules(request, user, app_id):
     modules = Module.objects.filter(app_id=app_id)
 
@@ -54,12 +56,13 @@ def get_modules(request, user, app_id):
                 challenges_completed += 1
 
         complition[module.id] = [challenges_completed, total_challenge]
-
+    is_subscribed = is_subscribed_to_app(app_id, user['id'])
     return Response([{
         'id': module.id,
         'module_name': module.name,
         'description': module.description,
         'active': module.active,
+        'is_allowed': (not module.subscription_required) or is_subscribed,
         'complition': {
             'completed': complition[module.id][0],
             'total': complition[module.id][1]
@@ -70,10 +73,15 @@ def get_modules(request, user, app_id):
 
 @api_view(['GET'])
 @isAuth
-@isSubscribed
 def get_challenges_labels(request, user, app_id, module_id):
+
+    if not is_allowed(Module, module_id, app_id, user['id']):
+        app = App.objects.get(id = app_id)
+        return Response({"error": f"You are not subscribed to {app.app_name}!"}, status=403)
     # if completed show completed and how many star rating
     challenge = Challenge.objects.filter(module_id=module_id)
+    print(challenge)
+    # is_subscribed = is_subscribed_to_app(app_id, user['id'])
 
     challenge_completed = {}
     for ch in challenge:
@@ -108,10 +116,13 @@ def get_challenges_labels(request, user, app_id, module_id):
 
 @api_view(['POST'])
 @isAuth
-@isSubscribed
 def get_responce(request, user, app_id, lebel_id):
     # use gpt to give responce like rating in different skills
+    
     lebel = Level.objects.get(id=lebel_id)
+    if not is_allowed(Module, lebel.challenge.module.id, app_id, user['id']):
+        app = App.objects.get(id = app_id)
+        return Response({"error": f"You are not subscribed to {app.app_name}!"}, status=403)
     user = User.objects.get(id=user['id'])
     if (not lebel or not request.data["answer"]):
         return Response({
@@ -290,7 +301,6 @@ def search(request, search):
 
 
 @api_view(['GET'])
-@isSubscribed
 def get_categories(request, app_id):
     categories = Categories.objects.filter(app_id=app_id)
     if (not categories):
@@ -306,7 +316,6 @@ def get_categories(request, app_id):
 
 
 @api_view(['GET'])
-@isSubscribed
 def get_skills(request, app_id, categorie_id):
     skills = Skill.objects.filter(category_id=categorie_id)
     if (not skills):
@@ -332,9 +341,9 @@ def get_skills(request, app_id, categorie_id):
 
 @api_view(['POST'])
 @isAuth
-@isSubscribed
 def get_skill_responce(request, user, app_id, skill_id):
-    answer = request.data['answer'];                          # assuming answer is of type json and now a dict
+    # assuming answer is of type json and now a dict
+    answer = request.data['answer']
     skill = Skill.objects.filter(id=skill_id).first()
     if (not skill):
         return Response({
@@ -352,7 +361,7 @@ def get_skill_responce(request, user, app_id, skill_id):
         user=user,
         skill=skill,
         answer=request.data['answer'],
-        result= result
+        result=result
     )
     skill_response.save()
 
@@ -365,7 +374,6 @@ def get_skill_responce(request, user, app_id, skill_id):
 
 
 @api_view(['GET'])
-@isSubscribed
 def get_sections_topics(request, app_id):
     sections = Section.objects.filter(app_id=app_id)
     if (not sections):
@@ -387,7 +395,6 @@ def get_sections_topics(request, app_id):
 
 
 @api_view(['GET'])
-@isSubscribed
 def get_lessions(request, app_id, topic_id):
     lessions = Lession.objects.filter(topic_id=topic_id)
     if (not lessions):

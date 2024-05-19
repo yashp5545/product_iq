@@ -26,6 +26,7 @@ class Module(models.Model):
     description = models.TextField()
     active = models.BooleanField(default=True)
     app = models.ForeignKey(App, on_delete=models.CASCADE)
+    subscription_required = models.BooleanField(default=True)
 
     module_prompt = models.TextField(default='')
     # lebel_prompt = models.TextField(default='')
