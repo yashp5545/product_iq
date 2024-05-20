@@ -21,4 +21,7 @@ urlpatterns = [
                views.get_lessions, name="get_lessions"),
 
      path('search/<str:search>', views.search, name="search"),
+
+     path('trending/<str:type>', views.get_trending_topics, name = "get_trending_topics"),
+
 ]

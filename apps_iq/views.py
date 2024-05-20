@@ -76,7 +76,7 @@ def get_modules(request, user, app_id):
 def get_challenges_labels(request, user, app_id, module_id):
 
     if not is_allowed(Module, module_id, app_id, user['id']):
-        app = App.objects.get(id = app_id)
+        app = App.objects.get(id=app_id)
         return Response({"error": f"You are not subscribed to {app.app_name}!"}, status=403)
     # if completed show completed and how many star rating
     challenge = Challenge.objects.filter(module_id=module_id)
@@ -118,10 +118,10 @@ def get_challenges_labels(request, user, app_id, module_id):
 @isAuth
 def get_responce(request, user, app_id, lebel_id):
     # use gpt to give responce like rating in different skills
-    
+
     lebel = Level.objects.get(id=lebel_id)
     if not is_allowed(Module, lebel.challenge.module.id, app_id, user['id']):
-        app = App.objects.get(id = app_id)
+        app = App.objects.get(id=app_id)
         return Response({"error": f"You are not subscribed to {app.app_name}!"}, status=403)
     user = User.objects.get(id=user['id'])
     if (not lebel or not request.data["answer"]):
@@ -353,7 +353,7 @@ def get_skill_responce(request, user, app_id, skill_id):
             'message': 'No skill found'
         }, status=404)
     if not is_allowed(Skill, skill.id, app_id, user['id']):
-        app = App.objects.get(id = app_id)
+        app = App.objects.get(id=app_id)
         return Response({"error": f"You are not subscribed to {app.app_name}!"}, status=403)
     user = User.objects.get(id=user['id'])
 
@@ -406,13 +406,13 @@ def get_sections_topics(request, user, app_id):
 @isAuth
 def get_lessions(request, user, app_id, topic_id):
     lessions = Lession.objects.filter(topic_id=topic_id)
-    
+
     if (not lessions):
         return Response({
             'message': 'No lessions found'
         }, status=404)
     if not is_allowed(Topic, lessions.first().topic.id, app_id, user['id']):
-        app = App.objects.get(id = app_id)
+        app = App.objects.get(id=app_id)
         return Response({"error": f"You are not subscribed to {app.app_name}!"}, status=403)
     return Response([{
         'id': lession.id,
@@ -421,3 +421,62 @@ def get_lessions(request, user, app_id, topic_id):
         'active': lession.active,
 
     } for lession in lessions])
+
+
+@api_view(["GET"])
+@isAuth
+def get_trending_topics(request,user, type):
+    limit = int(request.query_params.get('limit', 5))
+    if type == "modules":
+        challenges = Challenge.objects.order_by("-id")[:limit]
+        response = {}
+        for challenge in challenges:
+            module = challenge.module
+            module_id = module.id
+            module_name = module.name
+
+            if module_id not in response.keys():
+                response[module_id] = {}
+                response[module_id]["module_id"] = module_id
+                response[module_id]["module_name"] = module_name
+                response[module_id]["challenges"] = []
+                response[module_id]["is_allowed"] = is_allowed(Module, module_id, module.app.id, user['id'])
+            response[module_id]["challenges"].append({
+                "challenge_name": challenge.name,
+                "challenge_id": challenge.id
+            })
+        
+        # return Response({
+        #     "challenges": [
+        #         {
+        #             "id": challenge.id,
+        #             "name": challenge.name, 
+        #             "module_id": challenge.module.id,
+        #             "module_name": challenge.module.name,
+        #             "is_allowed": is_allowed(Module, challenge.module.id, challenge.module.app.id, user['id'])
+        #         }
+        #         for challenge in challenges],
+        # })
+        return Response({"modules": response.values()})
+    elif type == "worktools":
+        skills = Skill.objects.order_by("-id")[:limit]
+        response = {}
+        for skill in skills:
+            category = skill.category
+            category_id = category.id
+            category_name = category.name
+            if category_id not in response.keys():
+                response[category_id] = {}
+                response[category_id]["category_id"] = category_id
+                response[category_id]["category_name"]= category_name
+                response[category_id]["skills"] = []
+            response[category_id]["skills"].append({
+                "skill_id": skill.id,
+                "skill_name": skill.name,
+            })
+        return Response({"category": response.values()})
+
+    else:
+        return Response({
+            "error": "only possible types are modules and worktools.",
+        })

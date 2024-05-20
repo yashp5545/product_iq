@@ -60,7 +60,7 @@ def login(request):
     responce.data = {
         'token': access_token,
         'name': user.name,
-        'email': user.email, 
+        'email': user.email,
         'username': user.username,
         'product_exp': user.product_exp,
         'phone_number': user.phone_number,
@@ -71,11 +71,11 @@ def login(request):
     return responce
 
 
-
 @api_view(['GET'])
 @isAuth
 def get_user(request, user):
     return Response(user)
+
 
 @api_view(['GET'])
 def refress_token(request):
@@ -123,19 +123,29 @@ def update_user(request):
     else:
         return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
 
+
 @api_view(['PUT'])
 @isAuth
 def add_referred_by(request, user):
     user = User.objects.get(id=user['id'])
     user_refered_by = User.objects.get(username=request.data['username'])
-    if(user_refered_by == None):
+    if (user_refered_by == None):
         return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
-    if(user_refered_by == user):
+    if (user_refered_by == user):
         return Response({'error': 'You cannot refer yourself'}, status=status.HTTP_400_BAD_REQUEST)
-    if(user.refered_by):
+    if (user.refered_by):
         return Response({'error': 'Referral already added!'}, status=status.HTTP_400_BAD_REQUEST)
     user.refered_by = user_refered_by
     user.save()
     return Response({'message': 'success', 'user': user.username, 'refered_by': user_refered_by.username})
 
+
+@api_view(["POST"])
+def forgot_password(request):
+    email = request.data.get("email")
+    if not email:
+        return Response({
+            "error": "Email is required for password reset",
+        }, status=400)
+    
     

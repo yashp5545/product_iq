@@ -79,7 +79,7 @@ ROOT_URLCONF = 'product_iq.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS':[BASE_DIR / "templates"] ,
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -195,3 +195,11 @@ STRIPE_WEBHOOK_SECRET = config("STRIPE_WEBHOOK_SECRET")
 BACKEND_DOMAIN = config("BACKEND_DOMAIN")
 PAYMENT_SUCCESS_URL = config("PAYMENT_SUCCESS_URL")
 PAYMENT_CANCEL_URL = config("PAYMENT_CANCEL_URL")
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")

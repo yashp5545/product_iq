@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 
@@ -10,4 +10,5 @@ urlpatterns = [
     path('auth/logout', views.logout, name="logout"),
     path('user/update', views.update_user, name="update_user"),
     path('user/add/referredby', views.add_referred_by, name='add_referred_by'),
+    path('user/password/forget/', include('django.contrib.auth.urls')),
 ]
