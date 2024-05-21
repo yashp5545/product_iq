@@ -6,9 +6,15 @@ from enum import Enum
 
 
 class PRODUCT_EXP_CHOICES(Enum):
-    BEGINNER = 'Beginner'
-    INTERMEDIATE = 'Intermediate'
-    ADVANCED = 'Advanced'
+    Aspiring_Product_Manager = "Aspiring Product Manager"
+    Associate_Product_Manager = "Associate Product Manager"
+    Product_Manager = "Product Manager"
+    Senior_Product_Manager = "Senior Product Manager"
+    Director_of_Product_Management = "Director of Product Management"
+    Head_of_Product = "Head of Product"
+    Vice_President_of_Product = "Vice President of Product"
+    Chief_Product_Officer = "Chief Product Officer"
+    Entrepreneur = "Entrepreneur"
 
 
 class CustomUserManager(BaseUserManager):
@@ -52,7 +58,7 @@ class User(AbstractUser, PermissionsMixin):
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(unique=True)
     product_exp = models.CharField(max_length=200, choices=[(
-        tag.value, tag.value) for tag in PRODUCT_EXP_CHOICES], default=PRODUCT_EXP_CHOICES.BEGINNER.value)
+        tag.value, tag.value) for tag in PRODUCT_EXP_CHOICES], default=PRODUCT_EXP_CHOICES.Aspiring_Product_Manager.value)
     password = models.CharField(max_length=128)
 
     name = models.CharField(max_length=50, blank=True)
