@@ -147,5 +147,8 @@ def forgot_password(request):
         return Response({
             "error": "Email is required for password reset",
         }, status=400)
-    
-    
+
+
+@api_view(["GET"])
+def get_product_exp_types(request):
+    return Response({"PRODUCT_EXPERIENCE": [product_exp.value for product_exp in PRODUCT_EXP_CHOICES]})

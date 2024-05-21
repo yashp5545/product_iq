@@ -11,4 +11,5 @@ urlpatterns = [
     path('user/update', views.update_user, name="update_user"),
     path('user/add/referredby', views.add_referred_by, name='add_referred_by'),
     path('user/action/', include('django.contrib.auth.urls')),
+    path('user/enum/experience', views.get_product_exp_types, name="get_product_exp_types")
 ]

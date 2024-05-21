@@ -138,7 +138,11 @@ def get_responce(request, user, app_id, lebel_id):
     #     overall_score = 0
     #     report={}
     # else:
-    responce = get_response(request.data["answer"], lebel.lebel_prompt)
+    
+    responce, prompt = get_response(request.data["answer"], lebel.lebel_prompt)
+    response["prompt"] = prompt
+    response["responce"] = responce
+
     overall_score = responce['overall_score'] if 'overall_score' in responce else 0
     report = responce['report'] if 'report' in responce else {}
 

@@ -11,7 +11,7 @@ def get_response(ans:str, lebel_prompt)->dict:
     prompt = get_prompt_for_lebel(ans, lebel_prompt)
     print(f"{prompt=}")
     code = openai(prompt, "_")
-    return clean_code(code, "json")
+    return clean_code(code, "json"), prompt
 
 def get_response_worktools(answer: dict[str, str]):
     prompt = get_prompt_for_worktools(answer)
