@@ -138,10 +138,11 @@ def get_responce(request, user, app_id, lebel_id):
     #     overall_score = 0
     #     report={}
     # else:
-    
+
     responce, prompt = get_response(request.data["answer"], lebel.lebel_prompt)
-    response["prompt"] = prompt
-    response["responce"] = responce
+    if (os.environ.get("MODE") == "DEV"):
+        response["prompt"] = prompt
+        response["responce"] = responce
 
     overall_score = responce['overall_score'] if 'overall_score' in responce else 0
     report = responce['report'] if 'report' in responce else {}
@@ -167,7 +168,8 @@ def get_responce(request, user, app_id, lebel_id):
         })
 
     all_responce = LevelResponses.objects.filter(user=user, level=lebel)
-    if (len(all_responce) > 2):
+    print(all_responce)
+    if (len(all_responce) >= 2):
         response.update({
             'previous': {
                 'answer': all_responce[len(all_responce)-2].answer,
