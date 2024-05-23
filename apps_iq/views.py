@@ -166,7 +166,8 @@ def get_responce(request, user, app_id, lebel_id):
             is_locked = True
             break;
     if is_locked:
-        Response({"error": "Please solve all the previous question to attempt this."}, status=403)
+        return Response({"error": "Please solve all the previous question to attempt this."}, status=403)
+
     response = {}
 
     # if (os.environ.get("MODE") == "DEV"):
