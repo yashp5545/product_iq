@@ -115,13 +115,14 @@ def get_challenges_labels(request, user, app_id, module_id):
                 'id': level.id,
                 'level_name': level.name,
                 'active': level.active,
+                'is_locked': is_locked,
+
             }
 
             if not is_locked:
                 nl.update({
                     'level_question': level.description,
                     'completed': nlr_exist,
-                    'is_locked': is_locked,
                     'rating': nlr_first.evalution_result if nlr_exist else None,
                     'result': nlr_first.result if nlr_exist else None,
                     'answer': nlr_first.answer if nlr_exist else None,
