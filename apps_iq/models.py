@@ -27,6 +27,7 @@ class Module(models.Model):
     active = models.BooleanField(default=True)
     app = models.ForeignKey(App, on_delete=models.CASCADE)
     subscription_required = models.BooleanField(default=True)
+    order_of_display = models.IntegerField()
 
     module_prompt = models.TextField(default='')
     # lebel_prompt = models.TextField(default='')

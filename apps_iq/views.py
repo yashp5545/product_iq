@@ -62,6 +62,7 @@ def get_modules(request, user, app_id):
         'module_name': module.name,
         'description': module.description,
         'active': module.active,
+        'order': module.order_of_display,
         'is_allowed': (not module.subscription_required) or is_subscribed,
         'complition': {
             'completed': complition[module.id][0],
@@ -95,23 +96,43 @@ def get_challenges_labels(request, user, app_id, module_id):
                 lebel_complition_status['completed'] += 1
         challenge_completed[ch.id] = lebel_complition_status
 
-    return Response([{
-        'id': challenge.id,
-        'challenge_name': challenge.name,
-        'description': challenge.description,
-        'active': challenge.active,
-        'complition': challenge_completed[challenge.id],
-        'labels': [{
-            'id': level.id,
-            'level_name': level.name,
-            'level_question': level.description,
-            'active': level.active,
-            'completed': LevelResponses.objects.filter(user=user['id'], level=level.id).exists(),
-            'rating': LevelResponses.objects.filter(user=user['id'], level=level.id).first().evalution_result if LevelResponses.objects.filter(user=user['id'], level=level.id).exists() else None,
-            'result': LevelResponses.objects.filter(user=user['id'], level=level.id).first().result if LevelResponses.objects.filter(user=user['id'], level=level.id).exists() else None,
-            'answer': LevelResponses.objects.filter(user=user['id'], level=level.id).first().answer if LevelResponses.objects.filter(user=user['id'], level=level.id).exists() else None,
-        } for level in Level.objects.filter(challenge_id=challenge.id)]
-    } for challenge in challenge])
+    response = []
+
+    for ch in challenge:
+        nch = {}
+        nch['id'] = ch.id
+        nch['challenge_name'] = ch.name
+        nch['description'] = ch.description
+        nch['active'] = ch.active
+        nch['complition'] = challenge_completed[ch.id]
+        nch['labels'] = []
+        is_locked = False
+        for level in Level.objects.filter(challenge_id=ch.id):
+            nlr = LevelResponses.objects.filter(user=user['id'], level=level.id)
+            nlr_exist = nlr.exists()
+            nlr_first = nlr.first()
+            nl = {
+                'id': level.id,
+                'level_name': level.name,
+                'active': level.active,
+            }
+
+            if not is_locked:
+                nl.update({
+                    'level_question': level.description,
+                    'completed': nlr_exist,
+                    'is_locked': is_locked,
+                    'rating': nlr_first.evalution_result if nlr_exist else None,
+                    'result': nlr_first.result if nlr_exist else None,
+                    'answer': nlr_first.answer if nlr_exist else None,
+                })
+
+            nch['labels'].append(nl)
+            if not nlr_exist:
+                is_locked = True
+        response.append(nch)
+    print(response)
+    return Response(response)
 
 
 @api_view(['POST'])
@@ -132,6 +153,19 @@ def get_responce(request, user, app_id, lebel_id):
         return Response({
             "message": f"The answer should be min {MIN_LEN} char long."
         }, status=400)
+
+    ch = lebel.challenge
+    is_locked = False
+    for level in Level.objects.filter(challenge_id=ch.id):
+        nlr = LevelResponses.objects.filter(user=user.id, level=level.id)
+        nlr_exist = nlr.exists()
+        if lebel.id == level.id:
+            break;
+        if not nlr_exist:
+            is_locked = True
+            break;
+    if is_locked:
+        Response({"error": "Please solve all the previous question to attempt this."}, status=403)
     response = {}
 
     # if (os.environ.get("MODE") == "DEV"):
@@ -431,7 +465,7 @@ def get_lessions(request, user, app_id, topic_id):
 
 @api_view(["GET"])
 @isAuth
-def get_trending_topics(request,user, type):
+def get_trending_topics(request, user, type):
     limit = int(request.query_params.get('limit', 5))
     if type == "modules":
         challenges = Challenge.objects.order_by("-id")[:limit]
@@ -446,17 +480,18 @@ def get_trending_topics(request,user, type):
                 response[module_id]["module_id"] = module_id
                 response[module_id]["module_name"] = module_name
                 response[module_id]["challenges"] = []
-                response[module_id]["is_allowed"] = is_allowed(Module, module_id, module.app.id, user['id'])
+                response[module_id]["is_allowed"] = is_allowed(
+                    Module, module_id, module.app.id, user['id'])
             response[module_id]["challenges"].append({
                 "challenge_name": challenge.name,
                 "challenge_id": challenge.id
             })
-        
+
         # return Response({
         #     "challenges": [
         #         {
         #             "id": challenge.id,
-        #             "name": challenge.name, 
+        #             "name": challenge.name,
         #             "module_id": challenge.module.id,
         #             "module_name": challenge.module.name,
         #             "is_allowed": is_allowed(Module, challenge.module.id, challenge.module.app.id, user['id'])
@@ -474,7 +509,7 @@ def get_trending_topics(request,user, type):
             if category_id not in response.keys():
                 response[category_id] = {}
                 response[category_id]["category_id"] = category_id
-                response[category_id]["category_name"]= category_name
+                response[category_id]["category_name"] = category_name
                 response[category_id]["skills"] = []
             response[category_id]["skills"].append({
                 "skill_id": skill.id,
