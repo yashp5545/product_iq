@@ -107,7 +107,7 @@ def get_challenges_labels(request, user, app_id, module_id):
         nch['complition'] = challenge_completed[ch.id]
         nch['labels'] = []
         is_locked = False
-        for level in Level.objects.filter(challenge_id=ch.id):
+        for level in Level.objects.filter(challenge_id=ch.id).order_by("order_of_display"):
             nlr = LevelResponses.objects.filter(user=user['id'], level=level.id)
             nlr_exist = nlr.exists()
             nlr_first = nlr.first()
@@ -116,6 +116,7 @@ def get_challenges_labels(request, user, app_id, module_id):
                 'level_name': level.name,
                 'active': level.active,
                 'is_locked': is_locked,
+                "order": level.order_of_display,
 
             }
 
@@ -157,7 +158,7 @@ def get_responce(request, user, app_id, lebel_id):
 
     ch = lebel.challenge
     is_locked = False
-    for level in Level.objects.filter(challenge_id=ch.id):
+    for level in Level.objects.filter(challenge_id=ch.id).order_by("order_of_display"):
         nlr = LevelResponses.objects.filter(user=user.id, level=level.id)
         nlr_exist = nlr.exists()
         if lebel.id == level.id:

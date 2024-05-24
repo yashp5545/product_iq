@@ -57,6 +57,7 @@ class Level(models.Model):
     name = models.CharField(max_length=LEN_MAX)
     description = models.TextField(verbose_name="level_question")
     active = models.BooleanField(default=True)
+    order_of_display = models.IntegerField()
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
 
     # use_model_lebel_prompt = models.BooleanField(default=True)
