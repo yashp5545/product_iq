@@ -229,8 +229,9 @@ def search(request, search):
     # search_term = search.lower()
     search_term = search
     pattern = search_term
-    query = Q(name__icontains=pattern) | Q(description__icontains=pattern)
-    query_name = Q(name__icontains=pattern)
+    print(pattern)
+    query = Q(name__contains=pattern) | Q(description__contains=pattern)
+    query_name = Q(name__contains=pattern)
     result = {}
 
     search_lebel_query = request.GET.get('search_lebel', None)
