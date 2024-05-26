@@ -226,10 +226,11 @@ def get_responce(request, user, app_id, lebel_id):
 
 @api_view(['GET'])
 def search(request, search):
-    search_term = search.lower()
+    # search_term = search.lower()
+    search_term = search
     pattern = search_term
-    query = Q(name__iregex=pattern) | Q(description__iregex=pattern)
-    query_name = Q(name__iregex=pattern)
+    query = Q(name__icontains=pattern) | Q(description__icontains=pattern)
+    query_name = Q(name__icontains=pattern)
     result = {}
 
     search_lebel_query = request.GET.get('search_lebel', None)
