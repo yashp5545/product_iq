@@ -17,5 +17,5 @@ urlpatterns = [
 
     path("success", views.success, name="success"),
     path("failed", views.failed, name="failed"),
-
+    path('details', views.current_access_status),
 ]

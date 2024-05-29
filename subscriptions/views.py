@@ -10,6 +10,9 @@ from .models import Plan, SubscriptionPayment, Coupon, PlanType, SubscriptionTra
 from users.isAuth import isAuth
 from .helper import handle_checkout_session, get_end_date, get_number_of_discount, get_discounted_price, get_coupon_discount
 from users.models import User
+from users.isSubscribed import is_subscribed_to_app
+from users.isPlanSubscribed import is_subscribed_to_plan
+from apps_iq.models import App
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -208,3 +211,31 @@ def failed(request):
     return Response({
         "message": "failed",
     }, status=401)
+
+
+@api_view(["GET"])
+@isAuth
+def current_access_status(request, user):
+    app_details = []
+    all_apps = App.objects.filter()
+    for app in all_apps:
+        app_detail = {}
+        app_detail["id"] = app.id
+        app_detail["name"] = app.app_name
+        app_detail["is_subscribed"] = is_subscribed_to_app(app.id, user['id'])
+        app_details.append(app_detail)
+    
+    plan_details = []
+    all_plans = Plan.objects.filter()
+    for plan in all_plans:
+        print(plan)
+        plan_detail = {}
+        plan_detail["id"] = plan.id
+        plan_detail["name"] = plan.name
+        plan_detail["is_subscribed"] = is_subscribed_to_plan(plan.id, user['id'])
+        plan_details.append(plan_detail)
+    print(app_details)
+    return Response({
+        "planDetails": plan_details,
+        "app_details": app_details
+    })
