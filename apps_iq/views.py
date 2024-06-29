@@ -28,6 +28,7 @@ def get_all(request, user):
         'app_name': app.app_name,
         'description': app.description,
         'is_subscribed': is_subscribed_to_app(app.id, user['id']),
+        'app_type': app.app_type,
     } for app in apps])
 
 

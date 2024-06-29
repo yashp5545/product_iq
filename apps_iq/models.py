@@ -5,6 +5,11 @@ from users.models import User
 
 LEN_MAX = 400
 
+
+class AppType(Enum):
+    MODULES = "modules"
+    WORKTOOLS = "worktools"
+    PRODUCTIQ = 'productiq'
 # Create your models here.
 class App(models.Model):
     app_name = models.CharField(max_length=LEN_MAX)
@@ -13,6 +18,9 @@ class App(models.Model):
     app_theme_color = models.CharField(max_length=50)
     # Assuming app logos are uploaded to a directory
     app_logo = models.ImageField(upload_to='app_logos/')
+
+    app_type = models.CharField(max_length=20, choices=[
+                            (tag.value, tag.value) for tag in AppType])
 
     def __str__(self):
         return self.app_name
