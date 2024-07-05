@@ -109,7 +109,8 @@ def get_challenges_labels(request, user, app_id, module_id):
         nch['labels'] = []
         is_locked = False
         for level in Level.objects.filter(challenge_id=ch.id).order_by("order_of_display"):
-            nlr = LevelResponses.objects.filter(user=user['id'], level=level.id)
+            nlr = LevelResponses.objects.filter(
+                user=user['id'], level=level.id)
             nlr_exist = nlr.exists()
             nlr_first = nlr.first()
             nl = {
@@ -163,10 +164,10 @@ def get_responce(request, user, app_id, lebel_id):
         nlr = LevelResponses.objects.filter(user=user.id, level=level.id)
         nlr_exist = nlr.exists()
         if lebel.id == level.id:
-            break;
+            break
         if not nlr_exist:
             is_locked = True
-            break;
+            break
     if is_locked:
         return Response({"error": "Please solve all the previous question to attempt this."}, status=403)
 
@@ -357,8 +358,9 @@ def get_categories(request, app_id):
         'id': category.id,
         'name': category.name,
         # 'description': category.description,
+        'order_of_display': category.order_of_display,
         'active': category.active,
-    } for category in categories])
+    } for category in categories].sort(key=lambda x: x['order_of_display']))
 
 
 @api_view(['GET'])

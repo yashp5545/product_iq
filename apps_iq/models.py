@@ -52,6 +52,7 @@ class Challenge(models.Model):
     name = models.CharField(max_length=LEN_MAX)
     description = models.TextField()
     active = models.BooleanField(default=True)
+    order_of_display = models.IntegerField()
     module = models.ForeignKey(Module, on_delete=models.CASCADE)
 
     def __str__(self):
