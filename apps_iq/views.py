@@ -42,19 +42,21 @@ def get_modules(request, user, app_id):
     for module in modules:
         # check how many challenges are complitely completed
         challenges = Challenge.objects.filter(module_id=module.id)
-        total_challenge = len(challenges)
+        total_challenge = 0
 
         challenges_completed = 0
         for ch in challenges:
             levels = Level.objects.filter(challenge_id=ch.id)
-            is_level_completed = True
+            # is_level_completed = True
             for level in levels:
-                if not LevelResponses.objects.filter(user=user['id'], level=level.id):
-                    is_level_completed = False
-                    break
-            if is_level_completed:
-                # print(levels)
-                challenges_completed += 1
+                total_challenge+=1;
+                if LevelResponses.objects.filter(user=user['id'], level=level.id):
+                    challenges_completed+=1
+                    # is_level_completed = False
+                    # break
+            # if is_level_completed:
+            #     # print(levels)
+            #     challenges_completed += 1
 
         complition[module.id] = [challenges_completed, total_challenge]
     is_subscribed = is_subscribed_to_app(app_id, user['id'])
