@@ -54,6 +54,7 @@ class Challenge(models.Model):
     active = models.BooleanField(default=True)
     order_of_display = models.IntegerField()
     module = models.ForeignKey(Module, on_delete=models.CASCADE)
+    challenge_prompt = models.CharField(max_length=300)
 
     def __str__(self):
         return self.name

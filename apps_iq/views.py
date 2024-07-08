@@ -180,7 +180,9 @@ def get_responce(request, user, app_id, lebel_id):
     #     report={}
     # else:
 
-    responce, prompt = get_response(request.data["answer"], lebel.lebel_prompt)
+    challenge_prompt = (lebel.challenge.challenge_prompt if lebel.challenge.challenge_prompt else "")+"\n"
+
+    responce, prompt = get_response(request.data["answer"], challenge_prompt+lebel.lebel_prompt)
     if (os.environ.get("MODE") == "DEV"):
         response["prompt"] = prompt
         response["responce"] = responce
