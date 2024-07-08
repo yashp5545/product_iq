@@ -21,6 +21,8 @@ class App(models.Model):
 
     app_type = models.CharField(max_length=20, choices=[
                             (tag.value, tag.value) for tag in AppType])
+    
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.app_name
