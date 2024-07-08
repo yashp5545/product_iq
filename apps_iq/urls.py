@@ -8,6 +8,7 @@ urlpatterns = [
     path('<int:app_id>/module/<int:module_id>',
          views.get_challenges_labels, name="get_challenges_labels"),
     path('<int:app_id>/response/lebel/<int:lebel_id>', views.get_responce, name="get_responce"),
+    path('<int:app_id>/response/lebel/<int:lebel_id>/all', views.get_all_previous_answers, name="get_all_previous_answers"),
 
 
     path('<int:app_id>/categorie', views.get_categories, name="get_categories"),

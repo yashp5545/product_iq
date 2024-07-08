@@ -49,9 +49,9 @@ def get_modules(request, user, app_id):
             levels = Level.objects.filter(challenge_id=ch.id)
             # is_level_completed = True
             for level in levels:
-                total_challenge+=1;
+                total_challenge += 1
                 if LevelResponses.objects.filter(user=user['id'], level=level.id):
-                    challenges_completed+=1
+                    challenges_completed += 1
                     # is_level_completed = False
                     # break
             # if is_level_completed:
@@ -180,9 +180,11 @@ def get_responce(request, user, app_id, lebel_id):
     #     report={}
     # else:
 
-    challenge_prompt = (lebel.challenge.challenge_prompt if lebel.challenge.challenge_prompt else "")+"\n"
+    challenge_prompt = (
+        lebel.challenge.challenge_prompt if lebel.challenge.challenge_prompt else "")+"\n"
 
-    responce, prompt = get_response(request.data["answer"], challenge_prompt+lebel.lebel_prompt)
+    responce, prompt = get_response(
+        request.data["answer"], challenge_prompt+lebel.lebel_prompt)
     if (os.environ.get("MODE") == "DEV"):
         response["prompt"] = prompt
         response["responce"] = responce
@@ -228,6 +230,20 @@ def get_responce(request, user, app_id, lebel_id):
     #     })
     check_and_reward_referer(user)
     return Response(response)
+
+
+@api_view(["GET"])
+@isAuth
+def get_all_previous_answers(request, user, app_id, lebel_id):
+    lebel = Level.objects.get(id=lebel_id)
+    user = User.objects.get(id=user['id'])
+    all_responce = LevelResponses.objects.filter(user=user, level=lebel)
+
+    return Response([{
+        "answer": responce.answer,
+        "result": responce.result,
+        "evaluation_result": responce.evalution_result,
+    } for responce in all_responce])
 
 
 @api_view(['GET'])
