@@ -275,6 +275,7 @@ def search(request, search):
                     'module_name': module.name,
                     'description': module.description,
                     'active': module.active,
+                    'app_id': module.app.id,
                 } for module in modules]
             depth_query -= 1
         if depth_query > 0:
@@ -287,6 +288,7 @@ def search(request, search):
                     'active': challenge.active,
                     'module': challenge.module.id,
                     'module_name': challenge.module.name,
+                    'app_id': challenge.module.app.id,
                 } for challenge in challenges]
             depth_query -= 1
         if depth_query > 0:
@@ -301,6 +303,7 @@ def search(request, search):
                     'challenge_name': label.challenge.name,
                     'module': label.challenge.module.id,
                     'module_name': label.challenge.module.name,
+                    'app_id': label.challenge.module.app.id,
                 } for label in labels]
             depth_query -= 1
     if search_lebel_query == "categorie" or not search_lebel_query:
@@ -313,6 +316,7 @@ def search(request, search):
                     'name': categorie.name,
                     'description': categorie.description,
                     'active': categorie.active,
+                    'app_id': categorie.app.id,
                 } for categorie in categories]
             depth_query -= 1
         if depth_query > 0:
@@ -325,6 +329,7 @@ def search(request, search):
                     'active': skill.active,
                     'categorie': skill.category.id,
                     'categorie_name': skill.category.name,
+                    'app_id': skill.category.app.id,
                 } for skill in skills]
             depth_query -= 1
     if search_lebel_query == "section" or not search_lebel_query:
@@ -335,7 +340,7 @@ def search(request, search):
                     'id': section.id,
                     'name': section.name,
                     'active': section.active,
-                    'app': section.app.id,
+                    'app_id': section.app.id,
                 } for section in sections]
             depth_query -= 1
         if (depth_query > 0):
@@ -347,6 +352,7 @@ def search(request, search):
                     'active': topic.active,
                     'section': topic.section.id,
                     'section_name': topic.section.name,
+                    'app_id': topic.section.app.id,
                 } for topic in topic]
             depth_query -= 1
         if depth_query > 0:
@@ -361,6 +367,7 @@ def search(request, search):
                     'topic_name': lession.topic.name,
                     'section': lession.topic.section.id,
                     'section_name': lession.topic.section.name,
+                    'app_id': lession.topic.section.app.id,
                 } for lession in lessions]
             depth_query -= 1
 
@@ -512,7 +519,8 @@ def get_trending_topics(request, user, type):
                     Module, module_id, module.app.id, user['id'])
             response[module_id]["challenges"].append({
                 "challenge_name": challenge.name,
-                "challenge_id": challenge.id
+                "challenge_id": challenge.id,
+                "app_id": module.app.id,
             })
 
         # return Response({
@@ -542,6 +550,7 @@ def get_trending_topics(request, user, type):
             response[category_id]["skills"].append({
                 "skill_id": skill.id,
                 "skill_name": skill.name,
+                "app_id": category.app.id,
             })
         return Response({"category": response.values()})
 
