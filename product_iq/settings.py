@@ -14,6 +14,7 @@ from datetime import timedelta
 from pathlib import Path
 
 from decouple import config
+import os
 
 
 
@@ -31,6 +32,12 @@ SECRET_KEY = 'django-insecure-j2*rh+eud%dh$y_47c67kdb(%hre4h=2i^ky+_tbo06je94#_)
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 
 # Application definition
@@ -109,14 +116,25 @@ WSGI_APPLICATION = 'product_iq.wsgi.application'
 #     }
 # }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'productiq',
+#         'USER': 'postgres',
+#         'PASSWORD': '1946',
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432',
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'productiq',
+        'NAME': 'product-iq-db',
         'USER': 'postgres',
-        'PASSWORD': '1946',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'PASSWORD': 'admin123',
+        'HOST': 'productiq-db-latest.cfywsyuwwtnz.ap-south-1.rds.amazonaws.com',
+        'PORT': '5432'
     }
 }
 
@@ -197,13 +215,12 @@ PAYMENT_SUCCESS_URL = config("PAYMENT_SUCCESS_URL")
 PAYMENT_CANCEL_URL = config("PAYMENT_CANCEL_URL")
 
 # for production
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # for testing
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtpout.secureserver.net'
+EMAIL_PORT = 465
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")

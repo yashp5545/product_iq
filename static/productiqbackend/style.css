@@ -1,0 +1,99 @@
+/* productiqbackend/static/productiqbackend/styles.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+body {
+    font-family: "Poppins", sans-serif;
+    background-color: #F3F2FC;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 80%;
+    height: 100vh;
+    max-width: 700px;
+    font-family: "Poppins", sans-serif;
+    margin: 30px auto;
+    padding: 10px;
+    margin-left: 10px;
+    
+    
+    border-radius: 8px;
+}
+
+h1 {
+    font-size: 24px;
+    color: #333;
+    color: #514ED7
+    ;
+    /* margin-bottom: 20px; */
+}
+
+p {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+
+form input[type="password"] {
+    padding: 14px;
+    
+    border: 1px solid #CBCBCB;
+    width: 90%;
+    color: #000;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 10px;
+    text-decoration: none;
+}
+
+form input[type="email"] {
+    padding: 14px;
+    
+    border: 1px solid #CBCBCB;
+    width: 90%;
+    color: #000;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 10px;
+    text-decoration: none;
+}
+
+form input[type="submit"] {
+    padding: 15px;
+    background-color: #514ED7
+
+    ;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-family: "Poppins", sans-serif;
+    width: 100%;
+}
+
+
+form button[type="submit"] {
+    padding: 15px;
+    background-color: #514ED7
+
+    ;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-family: "Poppins", sans-serif;
+    width: 100%;
+}
+
+form input[type="submit"]:hover {
+    background-color: #0056b3;
+}
