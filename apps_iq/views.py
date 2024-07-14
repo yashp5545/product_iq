@@ -23,6 +23,8 @@ MIN_LEN = 72
 @isAuth
 def get_all(request, user):
     apps = App.objects.all()
+    for i in apps:
+        print(i.app_logo)
     return Response([{
         'id': app.id,
         'app_name': app.app_name,
@@ -30,6 +32,7 @@ def get_all(request, user):
         'is_subscribed': is_subscribed_to_app(app.id, user['id']),
         'app_type': app.app_type,
         'active': app.active,
+        # "app_logo":app.app_logo
     } for app in apps])
 
 
@@ -120,6 +123,9 @@ def get_challenges_labels(request, user, app_id, module_id):
                 'id': level.id,
                 'level_name': level.name,
                 'active': level.active,
+                'company_logo': level.company_logo,
+                "level_hint":level.level_hint,
+                "deep_link_iq":level.deep_link_iq,
                 'is_locked': is_locked,
                 "order": level.order_of_display,
 
@@ -288,6 +294,7 @@ def search(request, search):
                     'description': challenge.description,
                     'active': challenge.active,
                     'module': challenge.module.id,
+                    "ExperienceTag":challenge.ExperienceTag,
                     'module_name': challenge.module.name,
                     'app_id': challenge.module.app.id,
                 } for challenge in challenges]
@@ -299,9 +306,12 @@ def search(request, search):
                     'id': label.id,
                     'label_name': label.name,
                     'level_question': label.description,
+                    "level_hint":label.level_hint,
+                    "deep_link_iq":label.deep_link_iq,
                     'active': label.active,
                     'challenge': label.challenge.id,
                     'challenge_name': label.challenge.name,
+                    "ExperienceTag":label.challenge.ExperienceTag,
                     'module': label.challenge.module.id,
                     'module_name': label.challenge.module.name,
                     'app_id': label.challenge.module.app.id,
@@ -521,6 +531,7 @@ def get_trending_topics(request, user, type):
             response[module_id]["challenges"].append({
                 "challenge_name": challenge.name,
                 "challenge_id": challenge.id,
+                "ExperienceTag":challenge.ExperienceTag,
                 "app_id": module.app.id,
             })
 
@@ -559,3 +570,4 @@ def get_trending_topics(request, user, type):
         return Response({
             "error": "only possible types are modules and worktools.",
         })
+

@@ -10,6 +10,7 @@ class AppType(Enum):
     MODULES = "modules"
     WORKTOOLS = "worktools"
     PRODUCTIQ = 'productiq'
+    
 # Create your models here.
 class App(models.Model):
     app_name = models.CharField(max_length=LEN_MAX)
@@ -18,7 +19,7 @@ class App(models.Model):
     app_theme_color = models.CharField(max_length=50)
     # Assuming app logos are uploaded to a directory
     app_logo = models.ImageField(upload_to='app_logos/')
-
+    order_of_display = models.IntegerField()
     app_type = models.CharField(max_length=20, choices=[
                             (tag.value, tag.value) for tag in AppType])
     
@@ -49,6 +50,10 @@ class Module(models.Model):
     class Meta:
         verbose_name = "Product_Coach_Module"
 
+class ExperienceTag(Enum):
+    PM = "PM"
+    SPM = "SPM"
+    CPO = "CPO"
 
 class Challenge(models.Model):
     name = models.CharField(max_length=LEN_MAX)
@@ -56,6 +61,8 @@ class Challenge(models.Model):
     active = models.BooleanField(default=True)
     order_of_display = models.IntegerField()
     module = models.ForeignKey(Module, on_delete=models.CASCADE)
+    ExperienceTag = models.CharField(max_length=20, choices=[
+                            (tag.value, tag.value) for tag in ExperienceTag])
     challenge_prompt = models.CharField(max_length=300)
 
     def __str__(self):
@@ -70,6 +77,9 @@ class Level(models.Model):
     description = models.TextField(verbose_name="level_question")
     active = models.BooleanField(default=True)
     order_of_display = models.IntegerField()
+    company_logo = models.ImageField(upload_to='company_logos/') 
+    deep_link_iq = models.CharField(max_length=LEN_MAX, verbose_name="field_value")
+    level_hint = models.CharField(max_length=LEN_MAX, verbose_name="field_value")
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
 
     # use_model_lebel_prompt = models.BooleanField(default=True)

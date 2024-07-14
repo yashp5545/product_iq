@@ -24,5 +24,9 @@ urlpatterns = [
      path('search/<str:search>', views.search, name="search"),
 
      path('trending/<str:type>', views.get_trending_topics, name = "get_trending_topics"),
+     
+     #######################3
+     # path('appcreate',views.createAppFun,name="createappPage")
+     
 
 ]

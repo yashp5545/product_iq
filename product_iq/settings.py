@@ -13,7 +13,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 
-from decouple import config
+from decouple import config, Csv
+
 import os
 
 
@@ -49,17 +50,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'rest_framework',
     'rest_framework_simplejwt',
-
     'corsheaders',
     'users',
     'subscriptions',
     'apps_iq',
-
-
-
 ]
 
 AUTH_USER_MODEL = "users.User"
@@ -127,6 +123,8 @@ WSGI_APPLICATION = 'product_iq.wsgi.application'
 #     }
 # }
 
+
+###############################################################################################
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -137,6 +135,9 @@ DATABASES = {
         'PORT': '5432'
     }
 }
+
+
+################################################################################################
 
 # DATABASES = {
 #     'default': {
@@ -206,9 +207,9 @@ CORS_ALLOW_CREDENTIALS = True
 
 
 # Stripe
-STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
+STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
-STRIPE_WEBHOOK_SECRET = config("STRIPE_WEBHOOK_SECRET")
+STRIPE_WEBHOOK_SECRET = config("STRIPE_WEBHOOK_SECRECT")
 
 BACKEND_DOMAIN = config("BACKEND_DOMAIN")
 PAYMENT_SUCCESS_URL = config("PAYMENT_SUCCESS_URL")

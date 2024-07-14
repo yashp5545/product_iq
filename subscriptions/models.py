@@ -20,7 +20,7 @@ class Plan(models.Model):
     annual_price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
     recommended = models.BooleanField(default=False)
-
+    order_of_display = models.IntegerField()
     # store all the app for which this plan is applicable
     apps = models.ManyToManyField(App)
 

@@ -52,6 +52,13 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(username, email, password, **extra_fields)
 
+class productrole(Enum):
+    CPO = "Business Acument"
+    SPM_People=  "Product Strategy"
+    PM_Lead=  "Product Metrics"
+    PM =  "Product Definition"
+    APM = "Product Discovery"
+
 
 class User(AbstractUser, PermissionsMixin):
 
@@ -65,7 +72,8 @@ class User(AbstractUser, PermissionsMixin):
     phone_number = models.CharField(max_length=15, blank=True)
     job_title = models.CharField(max_length=50, blank=True)
     company_or_institiution = models.CharField(max_length=50, blank=True)
-    
+    product_role = models.CharField(max_length=20, choices=[
+                            (tag.value, tag.value) for tag in productrole],default=productrole.PM.value)
     refered_by = models.ForeignKey(default=None, null= True, blank=True, on_delete= models.SET_NULL, to="User")
     referral_ct = models.IntegerField(default=0)
     number_of_discounts = models.IntegerField(default=0)
