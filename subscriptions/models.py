@@ -11,7 +11,7 @@ from enum import Enum
 
 class PlanType(Enum):
     MONTHLY = 'Monthly'
-    ANNUAL = 'Annual'
+    FOURMONTHS = 'Four-Months'
 
 
 class Plan(models.Model):
@@ -91,7 +91,7 @@ class SubscriptionTrack(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     plan = models.ForeignKey(Plan, on_delete=models.SET_NULL, null=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    duration = models.CharField(max_length=10, choices=[(
+    duration = models.CharField(max_length=11, choices=[(
         tag.value, tag.value) for tag in PlanType], default=PlanType.MONTHLY.value)
     initiation_time = models.DateTimeField(default=timezone.now)
     payment_conformation_time = models.DateTimeField(default=None, null=True)
@@ -115,7 +115,7 @@ class SubscriptionTrack(models.Model):
 class SubscriptionPayment(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     plan = models.ForeignKey(Plan, on_delete=models.SET_NULL, null=True)
-    duration = models.CharField(max_length=10, choices=[(
+    duration = models.CharField(max_length=11, choices=[(
         tag.value, tag.value) for tag in PlanType], default=PlanType.MONTHLY.value)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
@@ -149,8 +149,8 @@ class SubscriptionPayment(models.Model):
         if (duration == PlanType.MONTHLY.value):
             print(start_date)
             return start_date + timezone.timedelta(days=30+extra_days)
-        elif duration == PlanType.ANNUAL.value:
-            return start_date + timezone.timedelta(days=365+extra_days)
+        elif duration == PlanType.FOURMONTHS.value:
+            return start_date + timezone.timedelta(days=120+extra_days)
         else:
             raise "In get_end_date function there is a error of duration"
 

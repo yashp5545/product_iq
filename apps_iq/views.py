@@ -16,7 +16,7 @@ from rest_framework.response import Response
 
 from gpt.helper import get_response, get_response_worktools
 
-MIN_LEN = 72
+MIN_LEN = 50
 
 
 @api_view(['GET'])
@@ -152,7 +152,8 @@ def get_challenges_labels(request, user, app_id, module_id):
 @isAuth
 def get_responce(request, user, app_id, lebel_id):
     # use gpt to give responce like rating in different skills
-
+    
+        
     lebel = Level.objects.get(id=lebel_id)
     if not is_allowed(Module, lebel.challenge.module.id, app_id, user['id']):
         app = App.objects.get(id=app_id)
@@ -294,7 +295,7 @@ def search(request, search):
                     'description': challenge.description,
                     'active': challenge.active,
                     'module': challenge.module.id,
-                    "ExperienceTag":challenge.ExperienceTag,
+                    "ExperienceTag":challenge.Challenge_experienceTag,
                     'module_name': challenge.module.name,
                     'app_id': challenge.module.app.id,
                 } for challenge in challenges]
@@ -311,7 +312,7 @@ def search(request, search):
                     'active': label.active,
                     'challenge': label.challenge.id,
                     'challenge_name': label.challenge.name,
-                    "ExperienceTag":label.challenge.ExperienceTag,
+                    "ExperienceTag":label.challenge.Challenge_experienceTag,
                     'module': label.challenge.module.id,
                     'module_name': label.challenge.module.name,
                     'app_id': label.challenge.module.app.id,
@@ -531,7 +532,7 @@ def get_trending_topics(request, user, type):
             response[module_id]["challenges"].append({
                 "challenge_name": challenge.name,
                 "challenge_id": challenge.id,
-                "ExperienceTag":challenge.ExperienceTag,
+                "ExperienceTag":challenge.Challenge_experienceTag,
                 "app_id": module.app.id,
             })
 

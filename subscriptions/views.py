@@ -38,7 +38,7 @@ def get_all_plans(request, user):
         'price_monthly': float(plan.monthly_price),
         'discounted_monthly': get_discounted_price(plan, PlanType.MONTHLY, number_of_discount, coupon_discount),
         'price_annual': float(plan.annual_price),
-        'discounted_annual': get_discounted_price(plan, PlanType.ANNUAL, number_of_discount, coupon_discount),
+        'discounted_annual': get_discounted_price(plan, PlanType.FOURMONTHS, number_of_discount, coupon_discount),
         'description': plan.description,
         'recommended': plan.recommended,
         'apps': [app.app_name for app in plan.apps.all()]
@@ -72,7 +72,7 @@ def create_payment_intent(request, user, plan_id, duration):
 
     user = User.objects.get(id=user['id'])
     number_of_discount = get_number_of_discount(user)
-    plan_price = plan.annual_price if duration == PlanType.ANNUAL else plan.monthly_price
+    plan_price = plan.annual_price if duration == PlanType.FOURMONTHS else plan.monthly_price
 
     subscription_track = SubscriptionTrack.objects.create(
         user=user,
@@ -188,7 +188,7 @@ def get_my_subscriptions(request, user):
         'is_valid': subscription.end_date >= timezone.now().date(),
         'duration': subscription.duration,
         'amount_paid': subscription.amount,
-        'actual_amount': subscription.plan.annual_price if subscription.duration == PlanType.ANNUAL else subscription.plan.monthly_price,
+        'actual_amount': subscription.plan.annual_price if subscription.duration == PlanType.FOURMONTHS else subscription.plan.monthly_price,
         'apps_subscribed_to': [
             {
                 'id': app.id,

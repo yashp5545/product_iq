@@ -31,6 +31,12 @@ class App(models.Model):
     class Meta:
         verbose_name = "App"
 
+class productrole(Enum):
+    CPO = "Business Acument"
+    SPM_People=  "Product Strategy"
+    PM_Lead=  "Product Metrics"
+    PM =  "Product Definition"
+    APM = "Product Discovery"
 
 class Module(models.Model):
     name = models.CharField(max_length=LEN_MAX)
@@ -39,7 +45,8 @@ class Module(models.Model):
     app = models.ForeignKey(App, on_delete=models.CASCADE)
     subscription_required = models.BooleanField(default=True)
     order_of_display = models.IntegerField()
-
+    product_role = models.CharField(max_length=20, choices=[
+                            (tag.value, tag.value) for tag in productrole],default=productrole.PM.value)
     module_prompt = models.TextField(default='')
     # lebel_prompt = models.TextField(default='')
     master_prompt = models.TextField(default='')
@@ -51,25 +58,36 @@ class Module(models.Model):
         verbose_name = "Product_Coach_Module"
 
 class ExperienceTag(Enum):
-    PM = "PM"
-    SPM = "SPM"
-    CPO = "CPO"
+    Aspiring_Product_Manager = "Aspiring Product Manager"
+    Associate_Product_Manager = "Associate Product Manager"
+    Product_Manager = "Product Manager"
+    Senior_Product_Manager = "Senior Product Manager"
+    Director_of_Product_Management = "Director of Product Management"
+    Head_of_Product = "Head of Product"
+    Vice_President_of_Product = "Vice President of Product"
+    Chief_Product_Officer = "Chief Product Officer"
+    Entrepreneur = "Entrepreneur"
+
 
 class Challenge(models.Model):
-    name = models.CharField(max_length=LEN_MAX)
+    name = models.CharField(max_length=255)
     description = models.TextField()
     active = models.BooleanField(default=True)
     order_of_display = models.IntegerField()
     module = models.ForeignKey(Module, on_delete=models.CASCADE)
-    ExperienceTag = models.CharField(max_length=20, choices=[
-                            (tag.value, tag.value) for tag in ExperienceTag])
     challenge_prompt = models.CharField(max_length=300)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
 
     class Meta:
         verbose_name = "Product_Coach_Challenge"
+
+    def save(self, *args, **kwargs):
+        if self.user:
+            self.challenge_experience_tag = self.user.product_exp
+        super().save(*args, **kwargs)
 
 
 class Level(models.Model):
@@ -78,10 +96,10 @@ class Level(models.Model):
     active = models.BooleanField(default=True)
     order_of_display = models.IntegerField()
     company_logo = models.ImageField(upload_to='company_logos/') 
-    deep_link_iq = models.CharField(max_length=LEN_MAX, verbose_name="field_value")
-    level_hint = models.CharField(max_length=LEN_MAX, verbose_name="field_value")
+    deep_link_iq = models.CharField(max_length=LEN_MAX, verbose_name="deep_link_iq")
+    level_hint = models.CharField(max_length=LEN_MAX, verbose_name="level_hint")
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
-
+    topics = models.ManyToManyField('Topic')
     # use_model_lebel_prompt = models.BooleanField(default=True)
     lebel_prompt = models.TextField(default='')
 

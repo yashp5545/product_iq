@@ -125,17 +125,40 @@ WSGI_APPLICATION = 'product_iq.wsgi.application'
 
 
 ###############################################################################################
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'product-iq-db',
+#         'USER': 'postgres',
+#         'PASSWORD': 'admin123',
+#         'HOST': 'productiq-db-latest.cfywsyuwwtnz.ap-south-1.rds.amazonaws.com',
+#         'PORT': '5432'
+#     }
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'ECommerece_db',
+#         'USER': 'postgres',
+#        	'PASSWORD': 'yash2209',
+#        	'HOST': 'localhost',
+#        	'PORT': '5432',
+
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'product-iq-db',
+        'NAME': 'productiq',
         'USER': 'postgres',
-        'PASSWORD': 'admin123',
-        'HOST': 'productiq-db-latest.cfywsyuwwtnz.ap-south-1.rds.amazonaws.com',
-        'PORT': '5432'
+       	'PASSWORD': 'yash2209',
+       	'HOST': 'localhost',
+       	'PORT': '5432',
+
     }
 }
-
 
 ################################################################################################
 
