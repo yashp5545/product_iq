@@ -23,8 +23,6 @@ MIN_LEN = 50
 @isAuth
 def get_all(request, user):
     apps = App.objects.all()
-    for i in apps:
-        print(i.app_logo)
     return Response([{
         'id': app.id,
         'app_name': app.app_name,
@@ -32,7 +30,6 @@ def get_all(request, user):
         'is_subscribed': is_subscribed_to_app(app.id, user['id']),
         'app_type': app.app_type,
         'active': app.active,
-        # "app_logo":app.app_logo
     } for app in apps])
 
 
@@ -71,6 +68,7 @@ def get_modules(request, user, app_id):
         'active': module.active,
         'order': module.order_of_display,
         'is_allowed': (not module.subscription_required) or is_subscribed,
+        'product_role':module.product_role,
         'complition': {
             'completed': complition[module.id][0],
             'total': complition[module.id][1]
@@ -87,8 +85,7 @@ def get_challenges_labels(request, user, app_id, module_id):
         app = App.objects.get(id=app_id)
         return Response({"error": f"You are not subscribed to {app.app_name}!"}, status=403)
     # if completed show completed and how many star rating
-    challenge = Challenge.objects.filter(module_id=module_id)
-    print(challenge)
+    challenge = Challenge.objects.filter(module_id=module_id).values()
     # is_subscribed = is_subscribed_to_app(app_id, user['id'])
 
     challenge_completed = {}
@@ -144,7 +141,6 @@ def get_challenges_labels(request, user, app_id, module_id):
             if not nlr_exist:
                 is_locked = True
         response.append(nch)
-    print(response)
     return Response(response)
 
 
