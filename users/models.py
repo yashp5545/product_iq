@@ -88,6 +88,9 @@ class User(AbstractUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
 
+    plan = models.BooleanField(default=True)
+    
+
     USERNAME_FIELD  = 'username'
     REQUIRED_FIELDS = ['email']
 

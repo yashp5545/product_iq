@@ -13,6 +13,7 @@ class AppType(Enum):
     
 # Create your models here.
 class App(models.Model):
+    
     app_name = models.CharField(max_length=LEN_MAX)
     description = models.TextField()
     # price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -32,11 +33,15 @@ class App(models.Model):
         verbose_name = "App"
 
 class productrole(Enum):
-    CPO = "Business Acument"
-    SPM_People=  "Product Strategy"
-    PM_Lead=  "Product Metrics"
-    PM =  "Product Definition"
-    APM = "Product Discovery"
+    Aspiring_Product_Manager = "Aspiring Product Manager"
+    Associate_Product_Manager = "Associate Product Manager"
+    Product_Manager = "Product Manager"
+    Senior_Product_Manager = "Senior Product Manager"
+    Director_of_Product_Management = "Director of Product Management"
+    Head_of_Product = "Head of Product"
+    Vice_President_of_Product = "Vice President of Product"
+    Chief_Product_Officer = "Chief Product Officer"
+    Entrepreneur = "Entrepreneur"
 
 class Module(models.Model):
     name = models.CharField(max_length=LEN_MAX)
@@ -45,8 +50,8 @@ class Module(models.Model):
     app = models.ForeignKey(App, on_delete=models.CASCADE)
     subscription_required = models.BooleanField(default=True)
     order_of_display = models.IntegerField()
-    product_role = models.CharField(max_length=20, choices=[
-                            (tag.value, tag.value) for tag in productrole],default=productrole.PM.value)
+    product_role = models.CharField(max_length=60, choices=[
+                            (tag.value, tag.value) for tag in productrole],default=productrole.Product_Manager.value)
     module_prompt = models.TextField(default='')
     # lebel_prompt = models.TextField(default='')
     master_prompt = models.TextField(default='')
@@ -76,7 +81,8 @@ class Challenge(models.Model):
     order_of_display = models.IntegerField()
     module = models.ForeignKey(Module, on_delete=models.CASCADE)
     challenge_prompt = models.CharField(max_length=300)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_role = models.CharField(max_length=60, choices=[
+                            (tag.value, tag.value) for tag in ExperienceTag])
 
     def __str__(self):
         return self.name
@@ -85,8 +91,8 @@ class Challenge(models.Model):
         verbose_name = "Product_Coach_Challenge"
 
     def save(self, *args, **kwargs):
-        if self.user:
-            self.challenge_experience_tag = self.user.product_exp
+        if self.user_role:
+            self.challenge_experience_tag = self.user_role
         super().save(*args, **kwargs)
 
 
@@ -96,7 +102,7 @@ class Level(models.Model):
     active = models.BooleanField(default=True)
     order_of_display = models.IntegerField()
     company_logo = models.ImageField(upload_to='company_logos/') 
-    deep_link_iq = models.CharField(max_length=LEN_MAX, verbose_name="deep_link_iq")
+    deep_link_iq = models.CharField(max_length=LEN_MAX, verbose_name="sampleanswer")
     level_hint = models.CharField(max_length=LEN_MAX, verbose_name="level_hint")
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
     topics = models.ManyToManyField('Topic')

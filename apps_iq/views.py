@@ -80,14 +80,15 @@ def get_modules(request, user, app_id):
 @api_view(['GET'])
 @isAuth
 def get_challenges_labels(request, user, app_id, module_id):
-
+    print('ssssssssssssss')
     if not is_allowed(Module, module_id, app_id, user['id']):
         app = App.objects.get(id=app_id)
         return Response({"error": f"You are not subscribed to {app.app_name}!"}, status=403)
     # if completed show completed and how many star rating
-    challenge = Challenge.objects.filter(module_id=module_id).values()
+    challenge = Challenge.objects.filter(module_id=module_id)
     # is_subscribed = is_subscribed_to_app(app_id, user['id'])
-
+    print(challenge)
+    
     challenge_completed = {}
     for ch in challenge:
         levels = Level.objects.filter(challenge_id=ch.id)
@@ -120,7 +121,7 @@ def get_challenges_labels(request, user, app_id, module_id):
                 'id': level.id,
                 'level_name': level.name,
                 'active': level.active,
-                'company_logo': level.company_logo,
+                'company_logo': str(level.company_logo),
                 "level_hint":level.level_hint,
                 "deep_link_iq":level.deep_link_iq,
                 'is_locked': is_locked,
@@ -291,7 +292,7 @@ def search(request, search):
                     'description': challenge.description,
                     'active': challenge.active,
                     'module': challenge.module.id,
-                    "ExperienceTag":challenge.Challenge_experienceTag,
+                    "ExperienceTag":challenge.user_role,
                     'module_name': challenge.module.name,
                     'app_id': challenge.module.app.id,
                 } for challenge in challenges]
@@ -308,7 +309,7 @@ def search(request, search):
                     'active': label.active,
                     'challenge': label.challenge.id,
                     'challenge_name': label.challenge.name,
-                    "ExperienceTag":label.challenge.Challenge_experienceTag,
+                    "ExperienceTag":label.challenge.user_role,
                     'module': label.challenge.module.id,
                     'module_name': label.challenge.module.name,
                     'app_id': label.challenge.module.app.id,
@@ -528,7 +529,7 @@ def get_trending_topics(request, user, type):
             response[module_id]["challenges"].append({
                 "challenge_name": challenge.name,
                 "challenge_id": challenge.id,
-                "ExperienceTag":challenge.Challenge_experienceTag,
+                "ExperienceTag":challenge.user_role,
                 "app_id": module.app.id,
             })
 
