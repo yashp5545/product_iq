@@ -27,8 +27,8 @@ def get_end_date(start_date, duration: PlanType, extra_days = 0):
     if (duration == PlanType.MONTHLY.value):
         print(start_date)
         return start_date + timezone.timedelta(days=30+extra_days)
-    elif duration == PlanType.ANNUAL.value:
-        return start_date + timezone.timedelta(days=365+extra_days)
+    elif duration == PlanType.FOURMONTHS.value:
+        return start_date + timezone.timedelta(days=120+extra_days)
     else:
         raise "In get_end_date function there is a error of duration"
 

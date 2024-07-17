@@ -14,7 +14,6 @@ from datetime import timedelta
 from pathlib import Path
 
 from decouple import config, Csv
-
 import os
 
 
@@ -123,44 +122,16 @@ WSGI_APPLICATION = 'product_iq.wsgi.application'
 #     }
 # }
 
-
-###############################################################################################
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'product-iq-db',
-#         'USER': 'postgres',
-#         'PASSWORD': 'admin123',
-#         'HOST': 'productiq-db-latest.cfywsyuwwtnz.ap-south-1.rds.amazonaws.com',
-#         'PORT': '5432'
-#     }
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'ECommerece_db',
-#         'USER': 'postgres',
-#        	'PASSWORD': 'yash2209',
-#        	'HOST': 'localhost',
-#        	'PORT': '5432',
-
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'productiq',
+        'NAME': 'product-iq-db',
         'USER': 'postgres',
-       	'PASSWORD': 'yash2209',
-       	'HOST': 'localhost',
-       	'PORT': '5432',
-
+        'PASSWORD': 'admin123',
+        'HOST': 'productiq-db-latest.cfywsyuwwtnz.ap-south-1.rds.amazonaws.com',
+        'PORT': '5432'
     }
 }
-
-################################################################################################
 
 # DATABASES = {
 #     'default': {
@@ -230,9 +201,9 @@ CORS_ALLOW_CREDENTIALS = True
 
 
 # Stripe
-STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLIC_KEY')
+STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
 STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
-STRIPE_WEBHOOK_SECRET = config("STRIPE_WEBHOOK_SECRECT")
+STRIPE_WEBHOOK_SECRET = config("STRIPE_WEBHOOK_SECRET")
 
 BACKEND_DOMAIN = config("BACKEND_DOMAIN")
 PAYMENT_SUCCESS_URL = config("PAYMENT_SUCCESS_URL")
